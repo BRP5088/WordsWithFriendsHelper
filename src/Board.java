@@ -1,10 +1,210 @@
+import java.sql.SQLOutput;
+
 /**
  * Created by Brett Patterson on 6/19/2018.
  */
 public class Board {
 
+    private Node board[][];
 
-    public Board(){
+    public Board() {
+        board = new Node[15][15];
+        for (int r = 0; r < board.length; r++) {
+            for (int c = 0; c < board[0].length; c++) {
+                board[r][c] = new Node(r, c);
+            }
+        }
 
+        // --- The starting place ---
+        board[7][7].setType( Node.tileType.start );
+        // --- end ---
+
+
+        // --- This is the TripleWordScore in the corners ---
+        board[0][3].setType( Node.tileType.TripleWordScore );
+        board[3][0].setType( Node.tileType.TripleWordScore );
+        board[0][11].setType( Node.tileType.TripleWordScore );
+        board[3][14].setType( Node.tileType.TripleWordScore );
+        board[11][0].setType( Node.tileType.TripleWordScore );
+        board[14][3].setType( Node.tileType.TripleWordScore );
+        board[11][14].setType( Node.tileType.TripleWordScore );
+        board[14][11].setType( Node.tileType.TripleWordScore );
+        // --- end ---
+
+        // --- This is the top left "line" segment ---
+        board[6][0].setType( Node.tileType.TripleLetterScore );
+        board[5][1].setType( Node.tileType.DoubleWordScore );
+        board[4][2].setType( Node.tileType.DoubleLetterScore );
+        board[3][3].setType( Node.tileType.TripleLetterScore );
+        board[2][4].setType( Node.tileType.DoubleLetterScore );
+        board[1][5].setType( Node.tileType.DoubleWordScore );
+        board[0][6].setType( Node.tileType.TripleLetterScore );
+        // --- end ---
+
+
+
+        // --- This is the top right "line" segment ---
+        board[0][8].setType( Node.tileType.TripleLetterScore );
+        board[1][9].setType( Node.tileType.DoubleWordScore );
+        board[2][10].setType( Node.tileType.DoubleLetterScore );
+        board[3][11].setType( Node.tileType.TripleLetterScore );
+        board[4][12].setType( Node.tileType.DoubleLetterScore );
+        board[5][13].setType( Node.tileType.DoubleWordScore );
+        board[6][14].setType( Node.tileType.TripleLetterScore );
+        // --- end ---
+
+
+
+        // --- This is the bottom right "line" segment ---
+        board[14][8].setType( Node.tileType.TripleLetterScore );
+        board[13][9].setType( Node.tileType.DoubleWordScore );
+        board[12][10].setType( Node.tileType.DoubleLetterScore );
+        board[11][11].setType( Node.tileType.TripleLetterScore );
+        board[10][12].setType( Node.tileType.DoubleLetterScore );
+        board[9][13].setType( Node.tileType.DoubleWordScore );
+        board[8][14].setType( Node.tileType.TripleLetterScore );
+        // --- end ---
+
+
+
+        // --- This is the bottom left "line" segment ---
+        board[8][0].setType( Node.tileType.TripleLetterScore );
+        board[9][1].setType( Node.tileType.DoubleWordScore );
+        board[10][2].setType( Node.tileType.DoubleLetterScore );
+        board[11][3].setType( Node.tileType.TripleLetterScore );
+        board[12][4].setType( Node.tileType.DoubleLetterScore );
+        board[13][5].setType( Node.tileType.DoubleWordScore );
+        board[14][6].setType( Node.tileType.TripleLetterScore );
+        // --- end ---
+
+
+        // --- This is the middle area bottom left 5 ---
+        board[7][3].setType( Node.tileType.DoubleWordScore );
+        board[8][4].setType( Node.tileType.DoubleLetterScore );
+        board[9][5].setType( Node.tileType.TripleLetterScore );
+        board[10][6].setType( Node.tileType.DoubleLetterScore );
+        board[11][7].setType( Node.tileType.DoubleWordScore );
+        // --- end ---
+
+
+
+        // --- This is the middle area bottom right 4 ---
+        board[10][8].setType( Node.tileType.DoubleLetterScore );
+        board[9][9].setType( Node.tileType.TripleLetterScore );
+        board[8][10].setType( Node.tileType.DoubleLetterScore );
+        board[7][11].setType( Node.tileType.DoubleWordScore );
+        // --- end ---
+
+
+
+        // --- This is the middle area top right 4 ---
+        board[6][10].setType( Node.tileType.DoubleLetterScore );
+        board[5][9].setType( Node.tileType.TripleLetterScore );
+        board[4][8].setType( Node.tileType.DoubleLetterScore );
+        board[3][7].setType( Node.tileType.DoubleWordScore );
+        // --- end ---
+
+
+
+        // --- This is the middle area top left 3 ---
+        board[4][6].setType( Node.tileType.DoubleLetterScore );
+        board[5][5].setType( Node.tileType.TripleLetterScore );
+        board[6][4].setType( Node.tileType.DoubleLetterScore );
+        // --- end ---
+
+
+
+        // --- This is the top left DoubleLetter type ---
+        board[2][1].setType( Node.tileType.DoubleLetterScore );
+        board[1][2].setType( Node.tileType.DoubleLetterScore );
+        // --- end ---
+
+
+
+        // --- This is the top right DoubleLetter type ---
+        board[1][12].setType( Node.tileType.DoubleLetterScore );
+        board[2][13].setType( Node.tileType.DoubleLetterScore );
+        // --- end ---
+
+
+        // --- This is the bottom left DoubleLetter type ---
+        board[12][1].setType( Node.tileType.DoubleLetterScore );
+        board[13][2].setType( Node.tileType.DoubleLetterScore );
+        // --- end ---
+
+
+
+        // --- This is the bottom right DoubleLetter type ---
+        board[13][12].setType( Node.tileType.DoubleLetterScore );
+        board[12][13].setType( Node.tileType.DoubleLetterScore );
+        // --- end ---
+    }
+
+    public Node[][] getBoard() {
+        return board;
+    }
+
+    public void displayBoard(){
+
+        String BLACK = "\u001B[30m";  //to see the console in colors
+        String RED = "\u001B[31m";  //to see the console in colors
+        String GREEN = "\u001B[32m"; //to see the console in colors
+        String YELLOW = "\u001B[33m"; //to see the console in colors
+        String BLUE = "\u001B[34m"; //to see the console in colors
+        String MAGENTA = "\u001B[35m"; //to see the console in colors
+        String CYAN = "\u001B[36m"; //to see the console in colors
+        String WHITE = "\u001B[37m"; //to see the console in colors
+        String RESET = "\u001B[0m"; //to see the console in colors
+
+
+        String BGBLACK = "\u001B[40";  //to see the console in colors
+        String BGRED = "\u001B[41";  //to see the console in colors
+        String BGGREEN = "\u001B[42"; //to see the console in colors
+        String BGYELLOW = "\u001B[43"; //to see the console in colors
+        String BGBLUE = "\u001B[44"; //to see the console in colors
+        String BGMAGENTA = "\u001B[45"; //to see the console in colors
+        String BGCYAN = "\u001B[46"; //to see the console in colors
+        String BGWHITE = "\u001B[47"; //to see the console in colors
+
+        String BBGBLACK = "\u001B[40;1m";  //to see the console in colors
+        String BBGRED = "\u001B[41;1m";  //to see the console in colors
+        String BBGGREEN = "\u001B[42;1m"; //to see the console in colors
+        String BBGYELLOW = "\u001B[43;1m"; //to see the console in colors
+        String BBGBLUE = "\u001B[44;1m"; //to see the console in colors
+        String BBGMAGENTA = "\u001B[45;1m"; //to see the console in colors
+        String BBGCYAN = "\u001B[46;1m"; //to see the console in colors
+        String BBGWHITE = "\u001B[47;1m"; //to see the console in colors
+
+        String BOLD = "\u001B[1m";  //to see the console in colors
+        String UNDERLINE = "\u001B[4m";  //to see the console in colors
+        String REVERSED = "\u001B[7m"; //to see the console in colors
+
+        String str = "";
+
+        for( Node row [] : board ){
+            for(Node node : row){
+
+                if( node.getType() == Node.tileType.TripleWordScore ){
+                    str += YELLOW +"|"+ node.toString() +"|"+ RESET;
+                }
+                if( node.getType() == Node.tileType.TripleLetterScore ){
+                    str += GREEN +"|"+ node.toString() +"|"+ RESET;
+                }
+                if( node.getType() == Node.tileType.DoubleWordScore ){
+                    str += RED +"|"+ node.toString() +"|"+ RESET;
+                }
+                if( node.getType() == Node.tileType.DoubleLetterScore ){
+                    str +=  BLUE +"|"+ node.toString() +"|"+ RESET;
+                }
+                if( node.getType() == Node.tileType.start ) {
+                    str += MAGENTA +"|"+ node.toString() +"|"+ RESET;
+                }
+                if( node.getType() == Node.tileType.regular ) {
+                    str += BBGWHITE +"|"+ node.toString() +"|"+ RESET;
+                }
+            }
+            str += "\n";
+        }
+        System.out.println( str );
     }
 }
