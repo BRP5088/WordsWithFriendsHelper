@@ -54,7 +54,7 @@ public class Node {
         this.col = col;
     }
 
-    public tileType getType() {
+    public tileType getNodeType() {
         return type;
     }
 
@@ -66,8 +66,10 @@ public class Node {
         return neighbors;
     }
 
-    public void setNeighbors(ArrayList<Node> neighbors) {
-        this.neighbors = neighbors;
+    public void addNeighbor( Node neighbor) {
+        if ( !neighbors.contains( neighbor) ){
+            neighbors.add( neighbor );
+        }
     }
 
     public String getLetter() {
@@ -85,6 +87,8 @@ public class Node {
     public void setPlayer(playerID player) {
         this.player = player;
     }
+
+
 
     @Override
     public String toString() {

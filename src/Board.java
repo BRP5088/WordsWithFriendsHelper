@@ -1,4 +1,4 @@
-import java.sql.SQLOutput;
+import java.util.HashMap;
 
 /**
  * Created by Brett Patterson on 6/19/2018.
@@ -6,14 +6,71 @@ import java.sql.SQLOutput;
 public class Board {
 
     private Node board[][];
+    private int player1pts;
+    private int player2pts;
+    private HashMap<String, Integer> values;
 
     public Board() {
+
+        player1pts = 0;
+        player2pts = 0;
+
+        values = new HashMap<>();
+        String letters = "AB CDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        String one = "AERSTIO";
+        String two = "DLNU";
+        String three = "YGH";
+        String four = "BCFPMW";
+        String five = "KV";
+        String eight = "X";
+        String ten = "ZJQ";
+
+        for(int i = 0; i <letters.length(); i++){
+            int val = 1;
+
+            if( one.contains(letters.substring(i, i + 1) ) ){
+                val = 1;
+            }
+            else if( two.contains(letters.substring(i, i + 1) ) ) {
+                val = 2;
+            }
+            else if( three.contains(letters.substring(i, i + 1) ) ) {
+                val = 3;
+            }
+            else if( four.contains(letters.substring(i, i + 1) ) ) {
+                val = 4;
+            }
+            else if( five.contains(letters.substring(i, i + 1) ) ) {
+                val = 5;
+            }
+            else if( eight.contains(letters.substring(i, i + 1) ) ) {
+                val = 8;
+            }
+            else if( ten.contains(letters.substring(i, i + 1) ) ) {
+                val = 10;
+            }
+            else if( letters.substring(i, i + 1).equals(" ") ){
+                val = 0;
+            }
+            values.put( letters.substring(i, i + 1), val );
+        }
+
+
+
         board = new Node[15][15];
         for (int r = 0; r < board.length; r++) {
             for (int c = 0; c < board[0].length; c++) {
                 board[r][c] = new Node(r, c);
             }
         }
+
+        for (int r = 0; r < board.length; r++) {
+            for (int c = 0; c < board[0].length; c++) {
+                makeNeighborhors(board[r][c]);
+            }
+        }
+
 
         // --- The starting place ---
         board[7][7].setType( Node.tileType.start );
@@ -144,6 +201,14 @@ public class Board {
         return board;
     }
 
+    public void setPlayer1pts(int player1pts) {
+        this.player1pts = player1pts;
+    }
+
+    public void setPlayer2pts(int player2pts) {
+        this.player2pts = player2pts;
+    }
+
     public void displayBoard(){
 
         String BLACK = "\u001B[30m";  //to see the console in colors
@@ -184,22 +249,22 @@ public class Board {
         for( Node row [] : board ){
             for(Node node : row){
 
-                if( node.getType() == Node.tileType.TripleWordScore ){
+                if( node.getNodeType() == Node.tileType.TripleWordScore ){
                     str += YELLOW +"|"+ node.toString() +"|"+ RESET;
                 }
-                if( node.getType() == Node.tileType.TripleLetterScore ){
+                if( node.getNodeType() == Node.tileType.TripleLetterScore ){
                     str += GREEN +"|"+ node.toString() +"|"+ RESET;
                 }
-                if( node.getType() == Node.tileType.DoubleWordScore ){
+                if( node.getNodeType() == Node.tileType.DoubleWordScore ){
                     str += RED +"|"+ node.toString() +"|"+ RESET;
                 }
-                if( node.getType() == Node.tileType.DoubleLetterScore ){
+                if( node.getNodeType() == Node.tileType.DoubleLetterScore ){
                     str +=  BLUE +"|"+ node.toString() +"|"+ RESET;
                 }
-                if( node.getType() == Node.tileType.start ) {
+                if( node.getNodeType() == Node.tileType.start ) {
                     str += MAGENTA +"|"+ node.toString() +"|"+ RESET;
                 }
-                if( node.getType() == Node.tileType.regular ) {
+                if( node.getNodeType() == Node.tileType.regular ) {
                     str += BBGWHITE +"|"+ node.toString() +"|"+ RESET;
                 }
             }
@@ -207,4 +272,44 @@ public class Board {
         }
         System.out.println( str );
     }
+
+    public int getPlayer1pts() {
+        return player1pts;
+    }
+
+    public int getPlayer2pts() {
+        return player2pts;
+    }
+
+    public HashMap<String, Integer> getValues() {
+        return values;
+    }
+
+    public void makeNeighborhors(Node node) {
+        int row = node.getRow();
+        int col = node.getCol();
+
+//        System.out.println("R:"+row+", C:"+col);
+//        System.out.println("Down");
+        if (row < board.length - 1) {
+                board[row + 1][col].addNeighbor(node);
+                node.addNeighbor( board[row + 1][col] );
+        }
+//        System.out.println("UP");
+        if (row >= 1) {
+                board[row - 1][col].addNeighbor(node);
+                node.addNeighbor(board[row - 1][col]);
+        }
+//        System.out.println("RIGHT");
+        if (col < board[0].length - 1) {
+                board[row][col + 1].addNeighbor(node);
+                node.addNeighbor(board[row][col + 1]);
+        }
+//        System.out.println("LEFT");
+        if (col > 0) {
+                board[row][col - 1].addNeighbor(node);
+                node.addNeighbor(board[row][col - 1]);
+        }
+    }
+
 }
