@@ -1,6 +1,5 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -18,8 +17,6 @@ public class Move {
     }
 
     public void preGameMoves(Node b [][]) throws FileNotFoundException {
-
-
 
         File f = new File( "src\\PreGameMoves.txt" );
 
@@ -43,7 +40,14 @@ public class Move {
 
     public void addToBoard(Node board [][], Node.playerID playerID, String word, String direction, int row, int col) {
 
-        updatePoints( board, playerID, word, row, col);
+        int total = getPlayerMovePts( board, playerID, word, row, col);
+
+        if( playerID == Node.playerID.player1){
+            this.board.setPlayer1pts( total );
+        }
+        else{
+            this.board.setPlayer2pts( total );
+        }
 
         if ( direction.equals("L") ) {  // Left to right
             int tmpCol = col;
@@ -61,19 +65,19 @@ public class Move {
         }
     }
 
-    public void updatePoints( Node board[][], Node.playerID playerID, String word, int row, int col ) {
+    public int getPlayerMovePts(Node board[][], Node.playerID playerID, String word, int row, int col ) {
         int total = 0;
         int multiplier = 1;
 
-        int numlst[] = new int[word.length()];
+        int numlst[] = new int[ word.length() ];
 
-        HashMap<String, Integer> values = new HashMap<>(new Board().getValues());
+        HashMap<String, Integer> values = new HashMap<>( new Board().getValues() );
 
         for (int i = 0; i < word.length(); i++) {
 
             numlst[i] = values.get( word.substring(i, i + 1) );
 
-            if (i == 0) {
+            if ( !this.board.getNode(row, col).isBeingUsed() ) {
                 if( board[row][col].getNodeType() == Node.tileType.TripleWordScore) {
                     multiplier = 3;
                 }
@@ -88,22 +92,13 @@ public class Move {
                 }
             }
         }
-//        System.out.println( numlst[0] );
-//        System.out.println( numlst[1] );
-//        System.out.println( numlst[2] );
-//        System.out.println("_____________");
         total = IntStream.of(numlst).sum();
 
         if (multiplier != 1) {
             total *= multiplier;
         }
 
-        if( playerID == Node.playerID.player1){
-            this.board.setPlayer1pts( this.board.getPlayer1pts() + total );
-        }
-        else{
-            this.board.setPlayer2pts( this.board.getPlayer2pts() + total );
-        }
+        return total;
     }
 
 

@@ -250,22 +250,22 @@ public class Board {
             for(Node node : row){
 
                 if( node.getNodeType() == Node.tileType.TripleWordScore ){
-                    str += YELLOW +"|"+ node.toString() +"|"+ RESET;
+                    str += YELLOW +"|"+ node.toString()+YELLOW +"|"+ RESET;
                 }
                 if( node.getNodeType() == Node.tileType.TripleLetterScore ){
-                    str += GREEN +"|"+ node.toString() +"|"+ RESET;
+                    str += GREEN +"|"+ node.toString()+GREEN +"|"+ RESET;
                 }
                 if( node.getNodeType() == Node.tileType.DoubleWordScore ){
-                    str += RED +"|"+ node.toString() +"|"+ RESET;
+                    str += RED +"|"+ node.toString()+RED +"|"+ RESET;
                 }
                 if( node.getNodeType() == Node.tileType.DoubleLetterScore ){
-                    str +=  BLUE +"|"+ node.toString() +"|"+ RESET;
+                    str +=  BLUE +"|"+ node.toString()+BLUE +"|"+ RESET;
                 }
                 if( node.getNodeType() == Node.tileType.start ) {
-                    str += MAGENTA +"|"+ node.toString() +"|"+ RESET;
+                    str += MAGENTA +"|"+ node.toString()+MAGENTA +"|"+ RESET;
                 }
                 if( node.getNodeType() == Node.tileType.regular ) {
-                    str += BBGWHITE +"|"+ node.toString() +"|"+ RESET;
+                    str += BBGWHITE +"|"+ node.toString() + BBGWHITE +"|"+ RESET;
                 }
             }
             str += "\n";
@@ -310,6 +310,10 @@ public class Board {
                 board[row][col - 1].addNeighbor(node);
                 node.addNeighbor(board[row][col - 1]);
         }
+    }
+
+    public Node getNode( int row, int col){
+        return board[row][col];
     }
 
 }

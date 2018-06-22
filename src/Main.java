@@ -1,12 +1,25 @@
 import java.io.FileNotFoundException;
+import java.sql.SQLOutput;
 
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
+		String RED = "\u001B[31m";
+		String RESET = "\u001B[0m";
+
 	    Board board = new Board();
 
 		Node b [][] = board.getBoard();
 		Move m = new Move( board );
+
+		System.out.println( RED + "*Making the dictionary*" + RESET );
+		LetterRack lr = new LetterRack();
+		System.out.println( RED + "*Finished making the dictionary*" + RESET );
+
+
+		String dictionary [][] = lr.getDictionary();
+
+
 //		m.preGameMoves( b );
 
 //		System.out.println();

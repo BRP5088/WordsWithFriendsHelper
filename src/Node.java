@@ -11,6 +11,7 @@ public class Node {
     private ArrayList<Node> neighbors;
     private String letter;
     private playerID player;
+    private boolean beingUsed;
 
     enum tileType{
         TripleWordScore,
@@ -33,6 +34,7 @@ public class Node {
         row = r;
         col = c;
         letter = "";
+        beingUsed = false;
         type = tileType.regular;
         player = playerID.player0;
         neighbors = new ArrayList<>();
@@ -89,9 +91,14 @@ public class Node {
     }
 
 
+    public boolean isBeingUsed() {
+        return beingUsed;
+    }
 
     @Override
     public String toString() {
+        String BOLD = "\u001B[1m";
+        String RESET = "\u001B[0m";
         String str;
 
         switch( type ){
@@ -141,7 +148,7 @@ public class Node {
                 str = "INVALID";
                 break;
         }
-        return str;
+        return BOLD+str+RESET;
     }
 
 
@@ -150,6 +157,7 @@ public class Node {
         this.letter = letter;
         this.row = row;
         this.col = col;
+        beingUsed = true;
     }
 
 }
