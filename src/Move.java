@@ -27,12 +27,17 @@ public class Move {
 
             String arr [] = tmp.split(":");
 
-            if( arr[0].equals("Player1") ) {
+            if( arr[0].contains("#") ){
+                System.out.println("CONTINUE");
+                continue;
+            }
+            else if( arr[0].equals("Player1") ) {
                 addToBoard(b, Node.playerID.player1, arr[1], arr[2], Integer.parseInt(arr[3]), Integer.parseInt(arr[4]) );
             }
-            else{
+            else if( arr[0].equals("Player2") ){
                 addToBoard(b, Node.playerID.player2, arr[1], arr[2], Integer.parseInt(arr[3]), Integer.parseInt(arr[4]) );
             }
+//            System.out.println(tmp);
         }
 
         s.close();
@@ -40,34 +45,53 @@ public class Move {
 
     public void addToBoard(Node board [][], Node.playerID playerID, String word, String direction, int row, int col) {
 
-        int total = getPlayerMovePts( board, playerID, word, row, col);
+        int nRow = row;
+        int nCol = col;
+
+        boolean blank = false;
+
+        for (int i = 0; i < word.length(); i++) {
+            if( word.substring(i, i+1).equals("*") ){
+                blank = true;
+            }
+            else {
+                board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+
+                if ( direction.equals("L") ) {
+                    nCol++;
+                }
+                else{
+                    nRow++;
+                }
+                blank = false;
+            }
+        }
+
+
+        if( word.contains("*") ){
+            word = word.replace("*", "");
+        }
+
+//        System.out.println("wordzz: "+word);
+
+        int total = getPlayerMovePts( board, playerID, word, direction, row, col);
 
         if( playerID == Node.playerID.player1){
-            this.board.setPlayer1pts( total );
+            this.board.setPlayer1pts( total + this.board.getPlayer1pts() );
         }
         else{
-            this.board.setPlayer2pts( total );
+            this.board.setPlayer2pts( total + this.board.getPlayer2pts() );
         }
 
-        if ( direction.equals("L") ) {  // Left to right
-            int tmpCol = col;
-            for (int i = 0; i < word.length(); i++) {
-                board[row][tmpCol].moveCall( playerID, word.substring(i, i+1), row, col);
-                tmpCol++;
-            }
-        }
-        else {  // up to down
-            int tmpRow = row;
-            for (int i = 0; i < word.length(); i++) {
-                board[tmpRow][col].moveCall( playerID, word.substring(i, i+1), row, col);
-                tmpRow++;
-            }
-        }
+
     }
 
-    public int getPlayerMovePts(Node board[][], Node.playerID playerID, String word, int row, int col ) {
+    public int getPlayerMovePts(Node board[][], Node.playerID playerID, String word, String direction, int row, int col ) {
         int total = 0;
         int multiplier = 1;
+
+        int nRow = row;
+        int nCol = col;
 
         int numlst[] = new int[ word.length() ];
 
@@ -77,27 +101,59 @@ public class Move {
 
             numlst[i] = values.get( word.substring(i, i + 1) );
 
-            if ( !this.board.getNode(row, col).isBeingUsed() ) {
-                if( board[row][col].getNodeType() == Node.tileType.TripleWordScore) {
+            if ( !board[nRow][nCol].isBeingUsed() ) {
+
+//                System.out.println("Node: "+board[nRow][nCol].toString()  );
+                if( board[nRow][nCol].getNodeType() == Node.tileType.TripleWordScore) {
                     multiplier = 3;
                 }
-                else if( board[row][col].getNodeType() == Node.tileType.DoubleWordScore) {
+                if( board[nRow][nCol].getNodeType() == Node.tileType.DoubleWordScore) {
                     multiplier = 2;
                 }
-                else if( board[row][col].getNodeType() == Node.tileType.TripleLetterScore) {
+                if( board[nRow][nCol].getNodeType() == Node.tileType.TripleLetterScore) {
                     numlst[i] *= 3;
                 }
-                else if( board[row][col].getNodeType() == Node.tileType.DoubleLetterScore) {
+                if( board[nRow][nCol].getNodeType() == Node.tileType.DoubleLetterScore) {
                     numlst[i] *= 2;
                 }
+                if( this.board.isNodeBlank( nRow, nCol) ) {
+                    numlst[i] = 0;
+                }
             }
+
+            this.board.setBeingUsed(nRow, nCol, playerID);
+
+            if( direction.equals("L") ){
+                nCol++;
+            }
+            else{
+                nRow++;
+            }
+
+
+
         }
         total = IntStream.of(numlst).sum();
 
+//        System.out.println("pre total: "+total);
         if (multiplier != 1) {
             total *= multiplier;
         }
+//        System.out.println("aft total: "+total);
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
 
+
+//        System.out.println("MULTI: "+multiplier);
+
+//        if( playerID == Node.playerID.player1) {
+//            System.out.println("Player1:");
+//            for (int n : numlst) {
+//                System.out.print(n+"|");
+//            }
+//        }
+//        System.out.println();
         return total;
     }
 

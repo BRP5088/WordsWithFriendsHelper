@@ -12,6 +12,7 @@ public class Node {
     private String letter;
     private playerID player;
     private boolean beingUsed;
+    private boolean blankTile;
 
     enum tileType{
         TripleWordScore,
@@ -37,6 +38,7 @@ public class Node {
         beingUsed = false;
         type = tileType.regular;
         player = playerID.player0;
+        blankTile = false;
         neighbors = new ArrayList<>();
     }
 
@@ -95,6 +97,10 @@ public class Node {
         return beingUsed;
     }
 
+    public boolean isBlankTile() {
+        return blankTile;
+    }
+
     @Override
     public String toString() {
         String BOLD = "\u001B[1m";
@@ -148,16 +154,24 @@ public class Node {
                 str = "INVALID";
                 break;
         }
-        return BOLD+str+RESET;
+//        return BOLD+str;
+//        if( str.equals("  ") )
+            return str;
+//        else
+//            return BOLD+str+RESET;
     }
 
 
-    public void moveCall(  Node.playerID player, String letter, int row, int col) {
-        this.player = player;
+    public void moveCall(playerID player, String letter, boolean blankState, int row, int col) {
+//        this.player = player;
         this.letter = letter;
         this.row = row;
         this.col = col;
-        beingUsed = true;
+//        beingUsed = true;
+        blankTile = blankState;
     }
 
+    public void setBeingUsed(boolean beingUsed) {
+        this.beingUsed = beingUsed;
+    }
 }

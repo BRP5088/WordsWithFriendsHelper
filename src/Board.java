@@ -209,6 +209,16 @@ public class Board {
         this.player2pts = player2pts;
     }
 
+    public boolean isNodeBlank( int row, int col){
+        return board[row][col].isBlankTile();
+    }
+
+
+    public void setBeingUsed(int row, int col, Node.playerID ID){
+        board[row][col].setBeingUsed( true );
+        board[row][col].setPlayer( ID );
+    }
+
     public void displayBoard(){
 
         String BLACK = "\u001B[30m";  //to see the console in colors
