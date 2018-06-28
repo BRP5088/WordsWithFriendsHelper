@@ -1,7 +1,10 @@
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.SQLOutput;
 
 public class Main {
+
+	// 25 points if all the tiles are used a single round
+
 
     public static void main(String[] args) throws FileNotFoundException {
 		String RED = "\u001B[31m";
@@ -19,48 +22,47 @@ public class Main {
 //		System.out.println( d1 );
 //		System.exit( 1 );
 
-		Board boards [] = new Board[2];
+
+		File folder = new File( "src\\Games");
+		File fileList [] = folder.listFiles();
 
 
+		if ( fileList == null) throw new AssertionError();
+
+		int numOfGames = fileList.length;
 
 
+		numOfGames = 1;
 
 
+		Board boards [] = new Board[ numOfGames ];
+		Move m [] = new Move[numOfGames];
 
-
-	    Board board = new Board();
-
-		Node b [][] = board.getBoard();
-		Move m = new Move( board );
+		for( int x = 0; x < numOfGames; x++){
+			boards[x] = new Board();
+			m[x] = new Move( boards[x] );
+			m[x].preGameMoves( boards[x].getBoard(), fileList[x].getPath() );
+		}
 
 		System.out.println( RED + "*Making the dictionary*" + RESET );
 		LetterRack lr = new LetterRack();
 		System.out.println( RED + "*Finished making the dictionary*" + RESET );
 
-
 		String dictionary [][] = lr.getDictionary();
 
 
-
-		m.preGameMoves( b );
-
-//		System.out.println();
-//		System.out.println();
-//		System.out.println();
-
-
-
-//	    m.addToBoard(b, Node.playerID.player1,"CAT","L",3,0);
-//	    m.addToBoard(b, Node.playerID.player2,"DAT","D",2,1);
-
-
 		System.out.println();
 		System.out.println();
 		System.out.println();
-		System.out.print( "Player 1 pts: "+board.getPlayer1pts() );
-		System.out.println( "    ||||||||||||||||||||| Player 2 pts: "+board.getPlayer2pts() );
 
-	    board.displayBoard();
-
+		for( int n = 0; n < numOfGames; n++){
+			System.out.println("Game: "+ (n+1) );
+			boards[n].displayBoard();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println();
+			System.out.println("_________________________________");
+		}
     }
 }

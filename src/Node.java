@@ -13,6 +13,7 @@ public class Node {
     private playerID player;
     private boolean beingUsed;
     private boolean blankTile;
+    private String word;
 
     enum tileType{
         TripleWordScore,
@@ -40,6 +41,7 @@ public class Node {
         player = playerID.player0;
         blankTile = false;
         neighbors = new ArrayList<>();
+        word = "";
     }
 
     public int getRow() {
@@ -101,9 +103,18 @@ public class Node {
         return blankTile;
     }
 
+    public String getWord() {
+        return word;
+    }
+
+    public void setWord(String word) {
+        this.word = word;
+    }
+
     @Override
     public String toString() {
         String BOLD = "\u001B[1m";
+        String BLACK = "\u001B[30m";
         String RESET = "\u001B[0m";
         String str;
 

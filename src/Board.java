@@ -216,7 +216,10 @@ public class Board {
 
     public void setBeingUsed(int row, int col, Node.playerID ID){
         board[row][col].setBeingUsed( true );
-        board[row][col].setPlayer( ID );
+
+        if( board[row][col].getPlayer() == Node.playerID.player0 ) {
+            board[row][col].setPlayer(ID);
+        }
     }
 
     public void displayBoard(){
@@ -255,6 +258,9 @@ public class Board {
         String REVERSED = "\u001B[7m"; //to see the console in colors
 
         String str = "";
+
+
+        System.out.println( "Player 1 pts: " + getPlayer1pts() +" ||||||||||||||||||||| Player 2 pts: " + getPlayer2pts() );
 
         for( Node row [] : board ){
             for(Node node : row){

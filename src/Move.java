@@ -1,5 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.stream.IntStream;
@@ -16,9 +17,10 @@ public class Move {
         this.board = board;
     }
 
-    public void preGameMoves(Node b [][]) throws FileNotFoundException {
+    public void preGameMoves(Node b [][], String path) throws FileNotFoundException {
 
-        File f = new File( "src\\PreGameMoves.txt" );
+//        File f = new File( "src\\PreGameMoves.txt" );
+        File f = new File( path );
 
         Scanner s = new Scanner( f );
 
@@ -28,10 +30,9 @@ public class Move {
             String arr [] = tmp.split(":");
 
             if( arr[0].contains("#") ){
-                System.out.println("CONTINUE");
                 continue;
             }
-            else if( arr[0].equals("Player1") ) {
+            if( arr[0].equals("Player1") ) {
                 addToBoard(b, Node.playerID.player1, arr[1], arr[2], Integer.parseInt(arr[3]), Integer.parseInt(arr[4]) );
             }
             else if( arr[0].equals("Player2") ){
@@ -45,6 +46,11 @@ public class Move {
 
     public void addToBoard(Node board [][], Node.playerID playerID, String word, String direction, int row, int col) {
 
+        String RED = "\u001B[31m";  //to see the console in colors
+        String BOLD = "\u001B[1m";  //to see the console in colors
+        String UNDERLINE = "\u001B[4m";  //to see the console in colors
+        String RESET = "\u001B[0m"; //to see the console in colors
+
         int nRow = row;
         int nCol = col;
 
@@ -55,7 +61,21 @@ public class Move {
                 blank = true;
             }
             else {
-                board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+
+                if( !board[nRow][nCol].isBeingUsed()  ) {
+                    board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+                }
+                else{
+                    if( !board[nRow][nCol].getLetter().equals( word.substring(i, i + 1) ) ){
+
+                        System.out.println( RED+ BOLD + "TRYING TO OVERWRITE A LETTER! " + RESET);
+                        System.out.println("Letter on the board: " + board[nRow][nCol] );
+                        System.out.println("Letter trying to replace it with: " + word.substring(i, i + 1));
+                        System.exit(3);
+                    }
+                    board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+                    board[nRow][nCol].setWord(word);
+                }
 
                 if ( direction.equals("L") ) {
                     nCol++;
@@ -105,10 +125,10 @@ public class Move {
 
 //                System.out.println("Node: "+board[nRow][nCol].toString()  );
                 if( board[nRow][nCol].getNodeType() == Node.tileType.TripleWordScore) {
-                    multiplier = 3;
+                    multiplier *= 3;
                 }
                 if( board[nRow][nCol].getNodeType() == Node.tileType.DoubleWordScore) {
-                    multiplier = 2;
+                    multiplier *= 2;
                 }
                 if( board[nRow][nCol].getNodeType() == Node.tileType.TripleLetterScore) {
                     numlst[i] *= 3;
@@ -119,6 +139,24 @@ public class Move {
                 if( this.board.isNodeBlank( nRow, nCol) ) {
                     numlst[i] = 0;
                 }
+
+
+
+                ArrayList<Node> neghbors = getNeghborsWithWords(  nRow, nCol, word);
+
+//                        this.board.getNode( nRow, nCol).getNeighbors();
+
+//                for( Node node : neghbors){
+//                    node
+//                }
+
+
+
+
+
+
+
+
             }
 
             this.board.setBeingUsed(nRow, nCol, playerID);
@@ -135,11 +173,13 @@ public class Move {
         }
         total = IntStream.of(numlst).sum();
 
-//        System.out.println("pre total: "+total);
+//        if( playerID == Node.playerID.player2)
+//            System.out.println("pre total: "+total);
         if (multiplier != 1) {
             total *= multiplier;
         }
-//        System.out.println("aft total: "+total);
+//        if( playerID == Node.playerID.player2)
+//            System.out.println("aft total: "+total);
 //        System.out.println();
 //        System.out.println();
 //        System.out.println();
@@ -147,14 +187,54 @@ public class Move {
 
 //        System.out.println("MULTI: "+multiplier);
 
-//        if( playerID == Node.playerID.player1) {
-//            System.out.println("Player1:");
+
+//        if( playerID == Node.playerID.player2) {
+//            System.out.println(word);
+//            System.out.println("Player2:");
 //            for (int n : numlst) {
 //                System.out.print(n+"|");
 //            }
+//            System.out.println();
+//            System.out.println();
+//            System.out.println();
+//            System.out.println( "MULRI: " + multiplier);
+//            System.out.println("TOTAL: "+ total);
 //        }
+
 //        System.out.println();
+//        System.out.println();
+//        System.out.println();
+//        System.out.println();
+
+//        System.exit( 1 );
         return total;
+    }
+
+    private ArrayList<Node> getNeghborsWithWords(int nRow, int nCol, String word) {
+        ArrayList<Node> lst = new ArrayList<>();
+        Node node = this.board.getNode(nRow, nCol);
+
+        for(Node n : node.getNeighbors() ){
+            if( !n.getWord().equals("") ){
+                lst.add( n );
+            }
+        }
+
+        if( lst.size() > 0) {
+            System.out.println("++++ " + word);
+
+            System.out.println("PPPPPPP");
+            for (Node n : lst)
+                System.out.println(n.getWord());
+            System.out.println("+++++++++++++++");
+            System.out.println();
+            System.out.println();
+            System.out.println();
+        }
+
+        System.out.println("13,7 neighbors: "+this.board.getNode(13,7).getNeighbors() );
+
+        return null;
     }
 
 
