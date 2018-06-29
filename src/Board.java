@@ -1,4 +1,6 @@
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by Brett Patterson on 6/19/2018.
@@ -9,6 +11,11 @@ public class Board {
     private int player1pts;
     private int player2pts;
     private HashMap<String, Integer> values;
+    private Set<String> wordLst;
+
+
+    String RED = "\u001B[31m";  //to see the console in colors
+    String RESET = "\u001B[0m";
 
     public Board() {
 
@@ -16,6 +23,8 @@ public class Board {
         player2pts = 0;
 
         values = new HashMap<>();
+        wordLst = new HashSet<>();
+
         String letters = "AB CDEFGHIJKLMNOPQRSTUVWXYZ";
 
         String one = "AERSTIO";
@@ -220,6 +229,22 @@ public class Board {
         if( board[row][col].getPlayer() == Node.playerID.player0 ) {
             board[row][col].setPlayer(ID);
         }
+    }
+
+
+    public boolean addToWordsLst( String word){
+        if( !wordLst.contains( word) ){
+            wordLst.add( word );
+            return true;
+        }
+        else{
+//            System.out.println( RED + "trying to add a word already in the wordLst!! file: Board.java" + RESET);
+            return false;
+        }
+    }
+
+    public Set<String> getWordLst(){
+        return wordLst;
     }
 
     public void displayBoard(){
