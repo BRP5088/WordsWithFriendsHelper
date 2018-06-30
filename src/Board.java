@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -11,7 +12,7 @@ public class Board {
     private int player1pts;
     private int player2pts;
     private HashMap<String, Integer> values;
-    private Set<String> wordLst;
+    private ArrayList<String> wordLst;
 
 
     String RED = "\u001B[31m";  //to see the console in colors
@@ -23,7 +24,7 @@ public class Board {
         player2pts = 0;
 
         values = new HashMap<>();
-        wordLst = new HashSet<>();
+        wordLst = new ArrayList<>();
 
         String letters = "AB CDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -222,7 +223,6 @@ public class Board {
         return board[row][col].isBlankTile();
     }
 
-
     public void setBeingUsed(int row, int col, Node.playerID ID){
         board[row][col].setBeingUsed( true );
 
@@ -231,19 +231,16 @@ public class Board {
         }
     }
 
+    public boolean addToWordsLst( String word ){
 
-    public boolean addToWordsLst( String word){
-        if( !wordLst.contains( word) ){
-            wordLst.add( word );
-            return true;
-        }
-        else{
-//            System.out.println( RED + "trying to add a word already in the wordLst!! file: Board.java" + RESET);
+        if( wordLst.contains( word ) ){
             return false;
         }
+        wordLst.add( word );
+         return true;
     }
 
-    public Set<String> getWordLst(){
+    public ArrayList<String> getWordLst(){
         return wordLst;
     }
 

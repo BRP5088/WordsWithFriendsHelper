@@ -1,8 +1,6 @@
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.util.*;
 import java.util.stream.IntStream;
 
 /**
@@ -41,7 +39,6 @@ public class Move {
             else if( arr[0].equals("Player2") ){
                 addToBoard(b, Node.playerID.player2, arr[1], arr[2], Integer.parseInt(arr[3]), Integer.parseInt(arr[4]) );
             }
-//            System.out.println(tmp);
         }
 
         s.close();
@@ -49,23 +46,28 @@ public class Move {
 
     public void addToBoard(Node board [][], Node.playerID playerID, String word, String direction, int row, int col) {
 
-        String RED = "\u001B[31m";  //to see the console in colors
-        String BOLD = "\u001B[1m";  //to see the console in colors
-        String UNDERLINE = "\u001B[4m";  //to see the console in colors
-        String RESET = "\u001B[0m"; //to see the console in colors
 
-        int nRow = row;
-        int nCol = col;
+        if( !this.board.getWordLst().contains( word ) ) {
 
-        boolean blank = false;
 
-        String throwaway = word.substring(0);
+            String RED = "\u001B[31m";  //to see the console in colors
+            String BOLD = "\u001B[1m";  //to see the console in colors
+            String UNDERLINE = "\u001B[4m";  //to see the console in colors
+            String RESET = "\u001B[0m"; //to see the console in colors
 
-        if( throwaway.contains("*") ){
-            throwaway = throwaway.replace("*", "");
-        }
+            int nRow = row;
+            int nCol = col;
 
-        if( this.board.addToWordsLst( "("+row+","+ col+ ")"+ throwaway + "|"+ direction ) ) {
+            boolean blank = false;
+
+            // --- Need to clean  up the string if it has a blank character ---
+            String throwaway = word.substring(0);
+            if (throwaway.contains("*")) {
+                throwaway = throwaway.replace("*", "");
+            }
+            // --- end ---
+
+            this.board.addToWordsLst("(" + row + "," + col + ")" + throwaway + "|" + direction);
 
             for (int i = 0; i < word.length(); i++) {
                 if (word.substring(i, i + 1).equals("*")) {
@@ -74,8 +76,7 @@ public class Move {
 
                     if (!board[nRow][nCol].isBeingUsed()) {
                         board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
-                    }
-                    else {
+                    } else {
                         if (!board[nRow][nCol].getLetter().equals(word.substring(i, i + 1))) {
 
                             System.out.println(RED + BOLD + "TRYING TO OVERWRITE A LETTER! " + RESET);
@@ -108,14 +109,9 @@ public class Move {
                 this.board.setPlayer2pts(total + this.board.getPlayer2pts());
             }
 
-            System.out.println("Running anyNewWords:++++");
-            String newWord = anyNewWords();
+            String newWord = anyNewWords(board);
 
-            if ( newWord.length() > 0) {
-                System.out.println( GREEN + "Found a new word" + RESET);
-
-                this.board.addToWordsLst( newWord );
-
+            if (newWord.length() > 0) {
                 String dir = "";
 
                 if (newWord.substring(newWord.length() - 2).equals("L")) {
@@ -132,16 +128,12 @@ public class Move {
                 r = Integer.parseInt(newWord.substring(1, newWord.indexOf(",")));
                 newWord = newWord.substring(newWord.indexOf(",") + 1);
 
-
                 c = Integer.parseInt(newWord.substring(0, newWord.indexOf(")")));
                 newWord = newWord.substring(newWord.indexOf(")") + 1);
 
-//            System.out.println("Word is:"+ newWord);
                 addToBoard(board, playerID, newWord, dir, r, c);
             }
-
         }
-//        System.out.println();
     }
 
     public int getPlayerMovePts(Node board[][], Node.playerID playerID, String word, String direction, int row, int col ) {
@@ -176,11 +168,15 @@ public class Move {
                 }
                 if( this.board.isNodeBlank( nRow, nCol) ) {
                     numlst[i] = 0;
+//                    System.out.println("blank");
                 }
-
             }
 //            else {
-//                System.out.println( board[nRow][nCol].getLetter() );
+//                if( this.board.isNodeBlank( nRow, nCol) ) {
+//                    numlst[i] = 0;
+//                    System.out.println("blank");
+//                }
+////                System.out.println( board[nRow][nCol].getLetter() );
 //            }
             this.board.setBeingUsed(nRow, nCol, playerID);
 
@@ -192,36 +188,51 @@ public class Move {
             }
         }
 
+        if( word.equals("LOINS")){
+            for( int n : numlst)
+                System.out.print(n+"|");
+
+            System.out.println();
+            System.out.println( this.board.isNodeBlank(7, 11) );
+        }
+
+//        if( word.equals("SHIT")){
+//            for( int n : numlst)
+//            System.out.print(n+"|");
+//
+//            System.out.println();
+//            System.out.println( this.board.isNodeBlank(7, 11) );
+//        }
+
         total = IntStream.of(numlst).sum();
 
         if (multiplier != 1) {
             total *= multiplier;
         }
-//        System.exit( 1 );
         return total;
     }
 
-    public String anyNewWords(){
+    public String anyNewWords( Node [][] b){
 
         ArrayList<String> boardLst = new ArrayList<>();
 
-        for( int r = 0; r < 14; r++){
+        for( int r = 0; r < b.length; r++){
             String tmp = "";
             String tmpStart = "";
             String tmmp = "";
             String tmmpStart = "";
 
-            for( int c = 0; c < 14; c++) {
+            for( int c = 0; c < b[0].length; c++) {
                 if( !this.board.getNode(r, c).getLetter().equals("") ) { //left to right
 
                     if( tmp.length() == 0){
-                        tmpStart +=  "("+r +"," +c+ ")";
+                        tmpStart +=  "(" + r +"," + c + ")";
                     }
                     tmp += board.getNode(r, c).getLetter();
                 }
-                else{
-                    tmp = "";
-                }
+//                else{
+//                    tmp = "";
+//                }
 
                 if( !this.board.getNode(c, r).getLetter().equals("") ) {  // up to down
                     if( tmmp.length() == 0){
@@ -229,82 +240,41 @@ public class Move {
                     }
                       tmmp += board.getNode(c, r).getLetter();
                 }
-                else{
-                    tmmp = "";
-                }
-
+//                else{
+//                    tmmp = "";
+//                }
             }
-            if( !tmp.equals("")  & tmp.length() > 1) {
+            if( !tmp.equals("") && tmp.length() > 1) {
                 boardLst.add( tmpStart + tmp+"|L" );
             }
 
-            if( !tmmp.equals("")  & tmmp.length() > 1) {
+            if( !tmmp.equals("") && tmmp.length() > 1) {
                 boardLst.add( tmmpStart + tmmp+"|D" );
             }
         }
 
-
         for( int n = 0; n < boardLst.size(); n++ ){
-//            System.out.println( node );
             if( this.board.getWordLst().contains( boardLst.get( n ) ) ){
                 boardLst.remove( boardLst.get( n ) );
             }
         }
 
-
-//        for( String node : boardLst){
-//            System.out.println( node );
-//        }
-//        System.out.println( this.board.getWordLst() );
-
-        if( boardLst.size() > 1){
+        if( boardLst.size() > 1 ){
             System.out.println( RED + "boardLst BIGGER THEN 1"+ RESET);
-            System.exit( 5);
+            System.exit( 5 );
         }
-
-
-//        System.out.println("size: "+ boardLst.size() );
-
-//        System.exit( 3);
 
         if( boardLst.size() == 1){
+//            System.out.println( boardLst.get( 0 ));
+            this.board.addToWordsLst( boardLst.get(0) );
+
+            System.out.println( boardLst.get( 0 ));
+
+            if( boardLst.get(0).equals("(7,7)LAUDER|D") ){
+                System.exit( 111 );
+            }
             return boardLst.get( 0 );
         }
-
         return "";
     }
-
-
-
-
-    /*
-    private ArrayList<Node> getNeghborsWithWords(int nRow, int nCol, String word) {
-        ArrayList<Node> lst = new ArrayList<>();
-        Node node = this.board.getNode(nRow, nCol);
-
-        for(Node n : node.getNeighbors() ){
-//            System.out.println(n.getWord());
-            if( !n.getWord().equals("") ){
-                lst.add( n );
-            }
-        }
-
-        if( lst.size() > 0) {
-            System.out.println("++++ " + word);
-
-            for (Node n : lst)
-                System.out.print ( n.getLetter()+"|" );
-//                System.out.println( "node Word: "+ n.getWord() );
-            System.out.println();
-            System.out.println("+++++++++++++++");
-//            System.out.println();
-//            System.out.println();
-        }
-
-
-        return null;
-    }
-    */
-
-
 }
