@@ -8,14 +8,20 @@ import java.util.stream.IntStream;
  */
 public class Move {
 
-
     private Board board;
     String RED = "\u001B[31m";  //to see the console in colors
     String GREEN = "\u001B[32m";
     String RESET = "\u001B[0m";
+    private String letters;
+
+
+
+//    private String letters = "";
+
 
     public Move(Board board ) {
         this.board = board;
+        letters = "";
     }
 
     public void preGameMoves(Node b [][], String path) throws FileNotFoundException {
@@ -36,8 +42,11 @@ public class Move {
             if( arr[0].equals("Player1") ) {
                 addToBoard(b, Node.playerID.player1, arr[1], arr[2], Integer.parseInt(arr[3]), Integer.parseInt(arr[4]) );
             }
-            else if( arr[0].equals("Player2") ){
+            if( arr[0].equals("Player2") ){
                 addToBoard(b, Node.playerID.player2, arr[1], arr[2], Integer.parseInt(arr[3]), Integer.parseInt(arr[4]) );
+            }
+            if (arr[0].equals("LetterRack") ){
+                letters = arr[1];
             }
         }
 
@@ -84,7 +93,13 @@ public class Move {
                             System.out.println("Letter trying to replace it with: " + word.substring(i, i + 1));
                             System.exit(3);
                         }
-                        board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+
+                        if( !this.board.getNode(nRow, nCol).isBeingUsed() ) {
+                            board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+                        }
+                        else{
+                            board[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), this.board.getNode(nRow, nCol).isBlankTile(), row, col);
+                        }
                     }
 
                     if (direction.equals("L")) {
@@ -166,18 +181,12 @@ public class Move {
                 if( board[nRow][nCol].getNodeType() == Node.tileType.DoubleLetterScore) {
                     numlst[i] *= 2;
                 }
-                if( this.board.isNodeBlank( nRow, nCol) ) {
-                    numlst[i] = 0;
-//                    System.out.println("blank");
-                }
             }
-//            else {
-//                if( this.board.isNodeBlank( nRow, nCol) ) {
-//                    numlst[i] = 0;
-//                    System.out.println("blank");
-//                }
-////                System.out.println( board[nRow][nCol].getLetter() );
-//            }
+
+            if( this.board.isNodeBlank( nRow, nCol) ) {
+                numlst[i] = 0;
+            }
+
             this.board.setBeingUsed(nRow, nCol, playerID);
 
             if( direction.equals("L") ){
@@ -188,22 +197,6 @@ public class Move {
             }
         }
 
-        if( word.equals("LOINS")){
-            for( int n : numlst)
-                System.out.print(n+"|");
-
-            System.out.println();
-            System.out.println( this.board.isNodeBlank(7, 11) );
-        }
-
-//        if( word.equals("SHIT")){
-//            for( int n : numlst)
-//            System.out.print(n+"|");
-//
-//            System.out.println();
-//            System.out.println( this.board.isNodeBlank(7, 11) );
-//        }
-
         total = IntStream.of(numlst).sum();
 
         if (multiplier != 1) {
@@ -212,52 +205,73 @@ public class Move {
         return total;
     }
 
-    public String anyNewWords( Node [][] b){
+    public String anyNewWords( Node [][] b) {
 
         ArrayList<String> boardLst = new ArrayList<>();
 
-        for( int r = 0; r < b.length; r++){
+        for (int r = 0; r < b.length; r++) {
             String tmp = "";
             String tmpStart = "";
+
+            for (int c = 0; c < b[0].length; c++) {
+
+                if( !this.board.getNode(r, c).getLetter().equals( "" )  ) {  //This takes account of left to right
+                    if( tmp.length() == 0){
+                        tmpStart +=  "("+r +"," +c+ ")";
+                    }
+
+                    tmp += board.getNode(r, c).getLetter();
+
+                    if( c + 1 < b[0].length && this.board.getNode(r , c + 1).getLetter().equals( "" )){
+                        if( !tmp.equals("") && tmp.length() > 1) {
+                            boardLst.add(tmpStart + tmp + "|L");
+                            tmp = "";
+                            tmpStart = "";
+                        }
+                        else{
+                            tmp = "";
+                            tmpStart = "";
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int c = 0; c < b[0].length; c++) {
             String tmmp = "";
             String tmmpStart = "";
 
-            for( int c = 0; c < b[0].length; c++) {
-                if( !this.board.getNode(r, c).getLetter().equals("") ) { //left to right
+            for (int r = 0; r < b.length; r++) {
 
-                    if( tmp.length() == 0){
-                        tmpStart +=  "(" + r +"," + c + ")";
+                if ( !this.board.getNode(r, c).getLetter().equals("") ) {  //This takes account of up to down
+                    if (tmmp.length() == 0) {
+                        tmmpStart += "(" + r + "," + c + ")";
                     }
-                    tmp += board.getNode(r, c).getLetter();
-                }
-//                else{
-//                    tmp = "";
-//                }
 
-                if( !this.board.getNode(c, r).getLetter().equals("") ) {  // up to down
-                    if( tmmp.length() == 0){
-                        tmmpStart +=  "("+r +"," +c+ ")";
+                    tmmp += board.getNode(r, c).getLetter();
+
+                    if( r + 1 < b.length && this.board.getNode(r + 1, c).getLetter().equals("")) {
+                        if (!tmmp.equals("") && tmmp.length() > 1) {
+                            boardLst.add(tmmpStart + tmmp + "|D");
+                            tmmp = "";
+                            tmmpStart = "";
+                        }
+                        else{
+                            tmmp = "";
+                            tmmpStart = "";
+                        }
                     }
-                      tmmp += board.getNode(c, r).getLetter();
                 }
-//                else{
-//                    tmmp = "";
-//                }
-            }
-            if( !tmp.equals("") && tmp.length() > 1) {
-                boardLst.add( tmpStart + tmp+"|L" );
-            }
-
-            if( !tmmp.equals("") && tmmp.length() > 1) {
-                boardLst.add( tmmpStart + tmmp+"|D" );
             }
         }
 
         for( int n = 0; n < boardLst.size(); n++ ){
             if( this.board.getWordLst().contains( boardLst.get( n ) ) ){
                 boardLst.remove( boardLst.get( n ) );
+                n--;
             }
         }
+
 
         if( boardLst.size() > 1 ){
             System.out.println( RED + "boardLst BIGGER THEN 1"+ RESET);
@@ -265,16 +279,13 @@ public class Move {
         }
 
         if( boardLst.size() == 1){
-//            System.out.println( boardLst.get( 0 ));
             this.board.addToWordsLst( boardLst.get(0) );
-
-            System.out.println( boardLst.get( 0 ));
-
-            if( boardLst.get(0).equals("(7,7)LAUDER|D") ){
-                System.exit( 111 );
-            }
             return boardLst.get( 0 );
         }
         return "";
+    }
+
+    public String getLetters() {
+        return letters;
     }
 }

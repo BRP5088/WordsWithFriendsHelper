@@ -13,7 +13,7 @@ public class LetterRack {
 
     public LetterRack() throws FileNotFoundException {
 
-        int total = 0;
+//        int total = 0;
         dictionary = new String[26][11000];
 
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -35,11 +35,11 @@ public class LetterRack {
             }
 
             dictionary[ place ][newLetter] = tmp;
-            total++;
+//            total++;
         }
         s.close();
 
-        System.out.println("Total words read in: " + total);
+//        System.out.println("Total words read in: " + total);
     }
 
     public String[][] getDictionary() {

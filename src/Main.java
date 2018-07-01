@@ -35,34 +35,28 @@ public class Main {
 		numOfGames = 1;
 
 
-		Board boards [] = new Board[ numOfGames ];
-		Move m [] = new Move[numOfGames];
+		Game games [] = new Game[ numOfGames ];
 
-		for( int x = 0; x < numOfGames; x++){
-			boards[x] = new Board();
-			m[x] = new Move( boards[x] );
-			m[x].preGameMoves( boards[x].getBoard(), fileList[x].getPath() );
+		for(int n = 0; n < numOfGames; n++){
+			games[n] = new Game();
+			games[n].passFileName( fileList[n].getPath() );
+//			games[n].findPossibleWords();
 		}
 
-		System.out.println( RED + "*Making the dictionary*" + RESET );
-		LetterRack lr = new LetterRack();
-		System.out.println( RED + "*Finished making the dictionary*" + RESET );
-
-		String dictionary [][] = lr.getDictionary();
-
-
-		System.out.println();
-		System.out.println();
-		System.out.println();
+		for( Game g : games){
+			g.findPossibleWords();
+		}
 
 		for( int n = 0; n < numOfGames; n++){
 			System.out.println("Game: "+ (n+1) );
-			boards[n].displayBoard();
+			games[n].getBoard().displayBoard();
 			System.out.println();
 			System.out.println();
 			System.out.println();
 			System.out.println();
 			System.out.println("_________________________________");
 		}
+
+
     }
 }
