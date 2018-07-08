@@ -47,6 +47,8 @@ public class Main {
 			g.findPossibleWords();
 		}
 
+		System.exit( 2 );
+
 		for( int n = 0; n < numOfGames; n++){
 			System.out.println("Game: "+ (n+1) );
 			games[n].getBoard().displayBoard();

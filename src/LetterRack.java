@@ -1,5 +1,8 @@
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Scanner;
 
 /**
@@ -7,16 +10,17 @@ import java.util.Scanner;
  */
 public class LetterRack {
 
-    private String dictionary [][];
+    private HashSet dictionary;
     private String rack [];
 
 
     public LetterRack() throws FileNotFoundException {
 
 //        int total = 0;
-        dictionary = new String[26][11000];
+//        dictionary = new String[26][11000];
+        dictionary = new HashSet();
 
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+//        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         File f = new File( "src\\wordList_Complete.txt" );
         Scanner s = new Scanner( f );
@@ -24,17 +28,18 @@ public class LetterRack {
         while( s.hasNext() ){
             String tmp = s.next().toUpperCase();
 
-            int place = alphabet.indexOf( tmp.substring(0, 1) );
-            int newLetter = 0;
+//            int place = alphabet.indexOf( tmp.substring(0, 1) );
+//            int newLetter = 0;
 
-            for(int n = 0; n < dictionary[place].length; n++ ){
-                if( dictionary[place][n] == null ){
-                    newLetter = n;
-                    break;
-                }
-            }
+//            for(int n = 0; n < dictionary[place].length; n++ ){
+//                if( dictionary[place][n] == null ){
+//                    newLetter = n;
+//                    break;
+//                }
+//            }
 
-            dictionary[ place ][newLetter] = tmp;
+//            dictionary[ place ][newLetter] = tmp;
+            dictionary.add( tmp );
 //            total++;
         }
         s.close();
@@ -42,7 +47,7 @@ public class LetterRack {
 //        System.out.println("Total words read in: " + total);
     }
 
-    public String[][] getDictionary() {
+    public HashSet getDictionary() {
         return dictionary;
     }
 
