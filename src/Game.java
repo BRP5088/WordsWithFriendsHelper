@@ -188,9 +188,9 @@ public class Game {
             }
         }
 
-//        for(String l : found){
-//            System.out.println( l );
-//        }
+        for(String l : found){
+            System.out.println( l );
+        }
 
     }
 }

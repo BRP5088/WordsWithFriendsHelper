@@ -38,19 +38,21 @@ public class Main {
 		Game games [] = new Game[ numOfGames ];
 
 		for(int n = 0; n < numOfGames; n++){
-			games[n] = new Game();
-			games[n].passFileName( fileList[n].getPath() );
+//			if( fileList[n].getPath().indexOf("Game1_KPBP.txt") > 0 ) {
+				games[n] = new Game();
+				games[n].passFileName(fileList[n].getPath());
 //			games[n].findPossibleWords();
+//			}
 		}
 
-		for( Game g : games){
-			g.findPossibleWords();
-		}
+//		for( Game g : games){
+//			g.findPossibleWords();
+//		}
 
-		System.exit( 2 );
+//		System.exit( 2 );
 
 		for( int n = 0; n < numOfGames; n++){
-			System.out.println("Game: "+ (n+1) );
+			System.out.println("Game: "+ ( n + 1 ) );
 			games[n].getBoard().displayBoard();
 			System.out.println();
 			System.out.println();

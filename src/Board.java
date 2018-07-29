@@ -36,8 +36,8 @@ public class Board {
         String eight = "X";
         String ten = "ZJQ";
 
-        for(int i = 0; i <letters.length(); i++){
-            int val = 1;
+        int val = 0;
+        for(int i = 0; i < letters.length(); i++ ){
 
             if( one.contains(letters.substring(i, i + 1) ) ){
                 val = 1;
