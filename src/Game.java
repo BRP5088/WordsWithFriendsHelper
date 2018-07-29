@@ -13,6 +13,8 @@ public class Game {
     private LetterRack letterRack;
     private HashSet dictionary;
     public String letters [];
+    public String player1Name;
+    public String player2Name;
 
     String BLACK = "\u001B[30m";  //to see the console in colors
     String RED = "\u001B[31m";  //to see the console in colors
@@ -51,13 +53,16 @@ public class Game {
     public Game() throws FileNotFoundException {
         board = new Board();
         move = new Move( board );
+
         letterRack = new LetterRack();
         dictionary = letterRack.getDictionary();
     }
 
     public void passFileName( String path) throws FileNotFoundException {
-        move.preGameMoves( board.getBoard(), path );
+        move.preGameMoves( board, path );
         setLetters( move.getLetters() );
+        board.setPlayer1Name( move.getPlayer1Name() );
+        board.setPlayer2Name( move.getPlayer2Name() );
     }
 
     public Board getBoard(){
@@ -75,7 +80,6 @@ public class Game {
 
     public ArrayList<String> generateCombos( String letters[] ){  // 7 letter total: 13692
         ArrayList<String> possibleCombos = new ArrayList<>();
-
 
         for( int s = 0; s < letters.length; s++ ) {
 
@@ -117,11 +121,11 @@ public class Game {
             }
         }
 
-//        for( String str : possibleCombos ){
-//            System.out.println( str );
-//        }
         return possibleCombos;
     }
+
+
+
 
 
     public void findPossibleWords() {
@@ -173,7 +177,6 @@ public class Game {
             for( String el : combos ){
                 possibleCombos.addAll( generateCombos( el.split("") ) );
             }
-
         }
         else{
             possibleCombos = generateCombos( letters );
@@ -181,16 +184,22 @@ public class Game {
 
         ArrayList<String> found = new ArrayList<>();
 
-
         for( int x = 0; x < possibleCombos.size(); x++ ){
-            if( dictionary.contains( possibleCombos.get( x ) ) ){
-                found.add( possibleCombos.get( x ) );
+            if( dictionary.contains( possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) ) ){
+                found.add(possibleCombos.get(x));
             }
         }
 
-        for(String l : found){
-            System.out.println( l );
-        }
+//        for(String l : found){
+//            System.out.println( l );
+//        }
+
+        ArrayList<String> boardWords = new ArrayList<>( move.getBoardWords( board, true ) );
+        System.out.println( boardWords );
+
+
+
+
 
     }
 }

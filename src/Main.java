@@ -34,22 +34,14 @@ public class Main {
 
 		numOfGames = 1;
 
-
 		Game games [] = new Game[ numOfGames ];
 
 		for(int n = 0; n < numOfGames; n++){
-//			if( fileList[n].getPath().indexOf("Game1_KPBP.txt") > 0 ) {
-				games[n] = new Game();
-				games[n].passFileName(fileList[n].getPath());
-//			games[n].findPossibleWords();
-//			}
+			games[n] = new Game();
+			games[n].passFileName( fileList[n].getPath() );
+			games[n].findPossibleWords();
 		}
 
-//		for( Game g : games){
-//			g.findPossibleWords();
-//		}
-
-//		System.exit( 2 );
 
 		for( int n = 0; n < numOfGames; n++){
 			System.out.println("Game: "+ ( n + 1 ) );

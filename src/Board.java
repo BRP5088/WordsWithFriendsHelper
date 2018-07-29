@@ -13,6 +13,8 @@ public class Board {
     private int player2pts;
     private HashMap<String, Integer> values;
     private ArrayList<String> wordLst;
+    private String player1Name;
+    private String player2Name;
 
 
     String RED = "\u001B[31m";  //to see the console in colors
@@ -244,6 +246,22 @@ public class Board {
         return wordLst;
     }
 
+    public String getPlayer1Name() {
+        return player1Name;
+    }
+
+    public void setPlayer1Name(String player1Name) {
+        this.player1Name = player1Name;
+    }
+
+    public String getPlayer2Name() {
+        return player2Name;
+    }
+
+    public void setPlayer2Name(String player2Name) {
+        this.player2Name = player2Name;
+    }
+
     public void displayBoard(){
 
         String BLACK = "\u001B[30m";  //to see the console in colors
@@ -282,7 +300,15 @@ public class Board {
         String str = "";
 
 
-        System.out.println( "Player 1 pts: " + getPlayer1pts() +" ||||||||||||||||||||| Player 2 pts: " + getPlayer2pts() );
+        String pl1 = player1Name + " pts: " + getPlayer1pts();
+        String pl2 = player2Name + " pts: " + getPlayer2pts();
+        String bars = "";
+
+        for( int num = 0; num <= 60 - ( pl1.length() + pl2.length() ); num++ ){
+            bars += "|";
+        }
+
+        System.out.println( pl1 + bars + pl2 );
 
         for( Node row [] : board ){
             for(Node node : row){
