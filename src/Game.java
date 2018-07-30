@@ -53,7 +53,6 @@ public class Game {
     public Game() throws FileNotFoundException {
         board = new Board();
         move = new Move( board );
-
         letterRack = new LetterRack();
         dictionary = letterRack.getDictionary();
     }
@@ -124,8 +123,113 @@ public class Game {
         return possibleCombos;
     }
 
+    public void filterIllegalWords( ArrayList<String> boardWordLst, ArrayList<String> wordComboLst ){
+
+        for( int wcw = 0; wcw < wordComboLst.size(); wcw++) {
+            String tmp = wordComboLst.get( wcw );
+            String word = "";
+
+            int nRow = Integer.parseInt( tmp.substring( tmp.indexOf( "(" ) + 1 , tmp.indexOf( "," ) ) );
+            int nCol = Integer.parseInt( tmp.substring( tmp.indexOf( "," ) + 1 , tmp.indexOf( ")" ) ) );
+            String dir = tmp.substring( tmp.indexOf( "|" ) + 1 , tmp.indexOf( "|" ) + 2 );
+
+            word += tmp.substring( 0, tmp.indexOf( "(" ) );
+            word += tmp.substring( tmp.indexOf( ")" ) + 1, tmp.indexOf("|") );
+            word += tmp.substring( tmp.indexOf( "|" ) + 2 );
+
+            System.out.println( BLUE + "OG Cords: (" + nRow +"," + nCol + ")" +RESET);
 
 
+            if( dir.equals( "D" ) ) {
+                if (!tmp.substring(0, tmp.indexOf("(")).equals("")) {
+                    nRow -= tmp.substring(0, tmp.indexOf("(")).length();
+                }
+            }
+
+            if( dir.equals( "L" ) ) {
+                if (!tmp.substring(0, tmp.indexOf("(") ).equals( "" ) ) {
+                    nCol -= tmp.substring(0, tmp.indexOf( "(" ) ).length();
+                }
+            }
+
+            System.out.println( BLUE + "Cords: (" + nRow +"," + nCol + ")" +RESET);
+
+            if( dir.equals("D") ) {
+                System.out.println("Down");
+                System.out.println( nRow + word.length() - 1 );
+            }
+            else {
+                System.out.println("Left");
+                System.out.println( nCol + word.length() - 1 );
+            }
+
+            System.out.println( BLUE+ "Word: " + word + " length: " + word.length() + RESET);
+
+            if( dir.equals( "D" ) ) {
+                if ( 0 < nRow + word.length() - 1 && nRow + word.length() - 1 < board.getBoard()[0].length) {
+                    if( dictionary.contains( board.getBoard()[nRow][nCol - 1].getLetter() + word ) ) {
+
+                        int newLetters = 0;
+
+                        for( String w : boardWordLst ){
+                            System.out.println( w );
+                            if( word.contains( w ) ){
+                                System.out.println( GREEN + " asdasd" + RESET );
+//                                String wordTemp = word;
+//                                wordTemp.replace( w, "" );
+//                                System.out.println( "WordTEMP " + wordTemp );
+                            }
+                        }
+
+                        System.exit( 1001 );
+                        System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
+                    }
+                    else{
+                        System.out.println( RED + "going Down, word: " + board.getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET );
+                    }
+//                    System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
+                }
+                else{
+                    System.out.println(RED + "going DOWN : DELETE word: " + word + RESET);
+                }
+            }
+
+            if( dir.equals( "L" ) ) {
+                if (0 < nCol + word.length() - 1 && nCol + word.length() - 1 < board.getBoard().length) {
+
+                    if( dictionary.contains( board.getBoard()[nRow - 1][nCol].getLetter() + word ) ) {
+
+                        System.out.println(GREEN + "going LEFT and works, word:" + word + RESET);
+                    }
+                    else{
+                        System.out.println( RED + "going LEFT, word: " + board.getBoard()[nRow - 1][nCol].getLetter() + word + " , is not in the dictionary" + RESET );
+                    }
+                }
+                else{
+                    System.out.println(RED + "going LEFT : DELETE word: " + word + RESET);
+                }
+            }
+
+//            System.out.println("nRow: " + nRow );
+//            System.out.println("nCol: " + nCol );
+//            System.out.println("DIR: " + dir );
+//            System.out.println("Word: " + word );
+
+
+
+
+            System.out.println("____________");
+
+
+//            for (int row = 0; row < board.getBoard().length; row++) {
+//                for (int col = 0; col < board.getBoard()[0].length; col++) {
+//
+//                }
+//            }
+        }
+
+
+    }
 
 
     public void findPossibleWords() {
@@ -186,20 +290,51 @@ public class Game {
 
         for( int x = 0; x < possibleCombos.size(); x++ ){
             if( dictionary.contains( possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) ) ){
-                found.add(possibleCombos.get(x));
+                found.add( possibleCombos.get( x ) );
             }
         }
 
-//        for(String l : found){
+
+
+        ArrayList<String> boardComboLst = new ArrayList<>();
+        ArrayList<String> boardWords = new ArrayList<>( move.getBoardWords( board, true ) );
+//        System.out.println( boardWords );
+
+        for( int v = 0; v < letters.length; v++){
+            possibleCombos.add( letters[v] );
+        }
+
+        for( int x = 0; x < possibleCombos.size(); x++ ){
+            for( int bw = 0; bw < boardWords.size(); bw++) {
+
+                String tmp = boardWords.get( bw );
+                tmp = tmp.substring( tmp.indexOf(")") + 1, tmp.indexOf( "|" ) );
+
+                if ( dictionary.contains( possibleCombos.get( x ) + tmp ) && !found.contains( possibleCombos.get( x ) + tmp ) ){
+                    boardComboLst.add( possibleCombos.get( x ) + boardWords.get( bw ) );
+                }
+
+                if ( dictionary.contains( tmp + possibleCombos.get( x ) ) && !found.contains( tmp + possibleCombos.get( x ) ) ){
+                    boardComboLst.add( boardWords.get( bw ) + possibleCombos.get( x ) );
+                }
+
+//                if ( dictionary.contains( possibleCombos.get( x )+ tmp + possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) + tmp + possibleCombos.get( x ) ) ){
+//                    boardComboLst.add( possibleCombos.get( x ) + boardWords.get( bw ) + possibleCombos.get( x ) );
+//                }
+                //TODO
+                /*
+                    add the functionality to have different combos of before and after.
+                 */
+            }
+        }
+
+//        System.out.println("size is: " + boardComboLst.size() );
+
+        filterIllegalWords( boardWords, boardComboLst );
+
+//        for(String l : boardComboLst){
 //            System.out.println( l );
 //        }
-
-        ArrayList<String> boardWords = new ArrayList<>( move.getBoardWords( board, true ) );
-        System.out.println( boardWords );
-
-
-
-
 
     }
 }

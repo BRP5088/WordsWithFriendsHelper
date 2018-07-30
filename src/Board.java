@@ -300,12 +300,12 @@ public class Board {
         String str = "";
 
 
-        String pl1 = player1Name + " pts: " + getPlayer1pts();
-        String pl2 = player2Name + " pts: " + getPlayer2pts();
+        String pl1 = BLUE + player1Name + " pts: " + getPlayer1pts() + RESET;
+        String pl2 = BLUE + player2Name + " pts: " + getPlayer2pts() + RESET;
         String bars = "";
 
-        for( int num = 0; num <= 60 - ( pl1.length() + pl2.length() ); num++ ){
-            bars += "|";
+        for( int num = 0; num < 78 - ( pl1.length() + pl2.length() ); num++ ){
+            bars += " ";
         }
 
         System.out.println( pl1 + bars + pl2 );
@@ -379,5 +379,31 @@ public class Board {
     public Node getNode( int row, int col){
         return board[row][col];
     }
+
+    public void setWordLst(ArrayList<String> wordLst) {
+        this.wordLst = wordLst;
+    }
+
+    public Board copyBoard( Board b ){
+        Board board = new Board();
+
+        board.setPlayer1pts( b.getPlayer1pts() );
+        board.setPlayer2pts( b.getPlayer2pts() );
+
+        board.setPlayer1Name( b.getPlayer1Name() );
+        board.setPlayer2Name( b.getPlayer2Name() );
+
+        board.setWordLst( b.getWordLst() );
+
+        for( int r = 0; r < board.getBoard().length; r++){
+            for( int c = 0; c < board.getBoard()[0].length; c++ ){
+                b.getBoard()[r][c].copyNode( board.getBoard()[r][c] );
+            }
+        }
+
+        return board;
+    }
+
+
 
 }

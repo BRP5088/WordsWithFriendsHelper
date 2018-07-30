@@ -69,7 +69,6 @@ public class Move {
 
     public void addToBoard(Board b , Node.playerID playerID, String word, String direction, int row, int col) {
 
-
         if( !this.board.getWordLst().contains( word ) ) {
 
 
@@ -99,7 +98,8 @@ public class Move {
 
                     if (!b.getBoard()[nRow][nCol].isBeingUsed()) {
                         b.getBoard()[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
-                    } else {
+                    }
+                    else {
                         if (!b.getBoard()[nRow][nCol].getLetter().equals(word.substring(i, i + 1))) {
 
                             System.out.println(RED + BOLD + "TRYING TO OVERWRITE A LETTER! " + RESET);
@@ -115,6 +115,8 @@ public class Move {
                             b.getBoard()[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), this.board.getNode(nRow, nCol).isBlankTile(), row, col);
                         }
                     }
+
+                    b.getBoard()[nRow][nCol].setWord( word );
 
                     if (direction.equals("L")) {
                         nCol++;

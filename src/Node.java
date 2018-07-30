@@ -182,7 +182,21 @@ public class Node {
         blankTile = blankState;
     }
 
+    public void setBlankTile( Boolean value){
+        this.blankTile = value;
+    }
+
     public void setBeingUsed(boolean beingUsed) {
         this.beingUsed = beingUsed;
+    }
+
+
+    public void copyNode( Node node ){
+        node.setType( this.type );
+        node.setPlayer( this.player );
+        node.setBeingUsed( this.beingUsed );
+        node.setLetter( this.letter );
+        node.setBlankTile( this.blankTile );
+        node.setPlayer( this.player );
     }
 }
