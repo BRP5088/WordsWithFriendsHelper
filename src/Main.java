@@ -3,7 +3,20 @@ import java.io.FileNotFoundException;
 
 public class Main {
 
-	// 25 points if all the tiles are used a single round
+	// 35 points if all the tiles are used a single round
+
+
+	public static void testMethod() throws FileNotFoundException {
+
+		Game g = new Game();
+		Board b = g.getBoard();
+		g.passFileName( "src\\Games\\IllegalMoveTest.txt");
+
+		System.out.println("REFIT: "+  ( !g.legalMove( b, "REFIT","D", 12,6) ) );
+
+		b.displayBoard();
+	}
+
 
 
     public static void main(String[] args) throws FileNotFoundException {
@@ -20,6 +33,8 @@ public class Main {
 
 
 //		System.out.println( d1 );
+
+//		testMethod();
 //		System.exit( 1 );
 
 
@@ -39,9 +54,8 @@ public class Main {
 		for(int n = 0; n < numOfGames; n++){
 			games[n] = new Game();
 			games[n].passFileName( fileList[n].getPath() );
-			games[n].findPossibleWords();
+			games[n].findPossibleWords( games[n].getBoard() );
 		}
-
 
 		for( int n = 0; n < numOfGames; n++){
 			System.out.println("Game: "+ ( n + 1 ) );

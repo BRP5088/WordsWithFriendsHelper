@@ -385,23 +385,23 @@ public class Board {
     }
 
     public Board copyBoard( Board b ){
-        Board board = new Board();
+//        Board board = new Board();
 
-        board.setPlayer1pts( b.getPlayer1pts() );
-        board.setPlayer2pts( b.getPlayer2pts() );
+        this.setPlayer1pts( b.getPlayer1pts() );
+        this.setPlayer2pts( b.getPlayer2pts() );
 
-        board.setPlayer1Name( b.getPlayer1Name() );
-        board.setPlayer2Name( b.getPlayer2Name() );
+        this.setPlayer1Name( b.getPlayer1Name() );
+        this.setPlayer2Name( b.getPlayer2Name() );
 
-        board.setWordLst( b.getWordLst() );
+        this.setWordLst( b.getWordLst() );
 
-        for( int r = 0; r < board.getBoard().length; r++){
-            for( int c = 0; c < board.getBoard()[0].length; c++ ){
-                b.getBoard()[r][c].copyNode( board.getBoard()[r][c] );
+        for( int r = 0; r < this.getBoard().length; r++){
+            for( int c = 0; c < this.getBoard()[0].length; c++ ){
+                this.getBoard()[r][c].copyNode( b.getBoard()[r][c] );
             }
         }
 
-        return board;
+        return this;
     }
 
 

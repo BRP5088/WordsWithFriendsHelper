@@ -16,45 +16,44 @@ public class Game {
     public String player1Name;
     public String player2Name;
 
-    String BLACK = "\u001B[30m";  //to see the console in colors
-    String RED = "\u001B[31m";  //to see the console in colors
-    String GREEN = "\u001B[32m"; //to see the console in colors
-    String YELLOW = "\u001B[33m"; //to see the console in colors
-    String BLUE = "\u001B[34m"; //to see the console in colors
-    String MAGENTA = "\u001B[35m"; //to see the console in colors
-    String CYAN = "\u001B[36m"; //to see the console in colors
-    String WHITE = "\u001B[37m"; //to see the console in colors
-    String RESET = "\u001B[0m"; //to see the console in colors
+    private String BLACK = "\u001B[30m";
+    private String RED = "\u001B[31m";
+    private String GREEN = "\u001B[32m";
+    private String YELLOW = "\u001B[33m";
+    private String BLUE = "\u001B[34m";
+    private String MAGENTA = "\u001B[35m";
+    private String CYAN = "\u001B[36m";
+    private String WHITE = "\u001B[37m";
+    private String RESET = "\u001B[0m";
 
+    private String BGBLACK = "\u001B[40";
+    private String BGRED = "\u001B[41";
+    private String BGGREEN = "\u001B[42";
+    private String BGYELLOW = "\u001B[43";
+    private String BGBLUE = "\u001B[44";
+    private String BGMAGENTA = "\u001B[45";
+    private String BGCYAN = "\u001B[46";
+    private String BGWHITE = "\u001B[47";
 
-    String BGBLACK = "\u001B[40";  //to see the console in colors
-    String BGRED = "\u001B[41";  //to see the console in colors
-    String BGGREEN = "\u001B[42"; //to see the console in colors
-    String BGYELLOW = "\u001B[43"; //to see the console in colors
-    String BGBLUE = "\u001B[44"; //to see the console in colors
-    String BGMAGENTA = "\u001B[45"; //to see the console in colors
-    String BGCYAN = "\u001B[46"; //to see the console in colors
-    String BGWHITE = "\u001B[47"; //to see the console in colors
+    private String BBGBLACK = "\u001B[40;1m";
+    private String BBGRED = "\u001B[41;1m";
+    private String BBGGREEN = "\u001B[42;1m";
+    private String BBGYELLOW = "\u001B[43;1m";
+    private String BBGBLUE = "\u001B[44;1m";
+    private String BBGMAGENTA = "\u001B[45;1m";
+    private String BBGCYAN = "\u001B[46;1m";
+    private String BBGWHITE = "\u001B[47;1m";
 
-    String BBGBLACK = "\u001B[40;1m";  //to see the console in colors
-    String BBGRED = "\u001B[41;1m";  //to see the console in colors
-    String BBGGREEN = "\u001B[42;1m"; //to see the console in colors
-    String BBGYELLOW = "\u001B[43;1m"; //to see the console in colors
-    String BBGBLUE = "\u001B[44;1m"; //to see the console in colors
-    String BBGMAGENTA = "\u001B[45;1m"; //to see the console in colors
-    String BBGCYAN = "\u001B[46;1m"; //to see the console in colors
-    String BBGWHITE = "\u001B[47;1m"; //to see the console in colors
-
-    String BOLD = "\u001B[1m";  //to see the console in colors
-    String UNDERLINE = "\u001B[4m";  //to see the console in colors
-    String REVERSED = "\u001B[7m"; //to see the console in colors
+    private String BOLD = "\u001B[1m";
+    private String UNDERLINE = "\u001B[4m";
+    private String REVERSED = "\u001B[7m";
 
 
     public Game() throws FileNotFoundException {
         board = new Board();
-        move = new Move( board );
         letterRack = new LetterRack();
         dictionary = letterRack.getDictionary();
+        move = new Move( board, dictionary );
     }
 
     public void passFileName( String path) throws FileNotFoundException {
@@ -123,7 +122,31 @@ public class Game {
         return possibleCombos;
     }
 
-    public void filterIllegalWords( ArrayList<String> boardWordLst, ArrayList<String> wordComboLst ){
+
+    public boolean legalMove(Board b , String word, String direction, int row, int col){
+
+        ArrayList<String> boardLst = new ArrayList<>( move.getBoardWords( b, true ) );
+
+        for( int n = 0; n < boardLst.size(); n++ ){
+            if( !dictionary.contains( boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    public void filterIllegalWords( Board b, ArrayList<String> boardWordLst, ArrayList<String> wordComboLst ){
+
+        Board boardLst [] = new Board[ wordComboLst.size() ];
+        ArrayList<String> deleteLst  = new ArrayList<>();
+
+        for( Board board : boardLst ){
+            board = new Board();
+            board.copyBoard( b );
+        }
+
 
         for( int wcw = 0; wcw < wordComboLst.size(); wcw++) {
             String tmp = wordComboLst.get( wcw );
@@ -166,26 +189,21 @@ public class Game {
             System.out.println( BLUE+ "Word: " + word + " length: " + word.length() + RESET);
 
             if( dir.equals( "D" ) ) {
-                if ( 0 < nRow + word.length() - 1 && nRow + word.length() - 1 < board.getBoard()[0].length) {
-                    if( dictionary.contains( board.getBoard()[nRow][nCol - 1].getLetter() + word ) ) {
+                if ( 0 < nRow + word.length() - 1 && nRow + word.length() - 1 < boardLst[wcw].getBoard()[0].length) { // checks the bounds
+                    if( dictionary.contains( boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word ) ) { //see if the word is even in the dictionary
 
-                        int newLetters = 0;
+                        move.addToBoard( boardLst[wcw], Node.playerID.player1, word, dir, nRow, nCol );
 
-                        for( String w : boardWordLst ){
-                            System.out.println( w );
-                            if( word.contains( w ) ){
-                                System.out.println( GREEN + " asdasd" + RESET );
-//                                String wordTemp = word;
-//                                wordTemp.replace( w, "" );
-//                                System.out.println( "WordTEMP " + wordTemp );
-                            }
+                        if( !legalMove( boardLst[wcw] , word, dir, nRow, nCol ) ){
+                            deleteLst.add( "("+nRow + "," + nCol + ")" + word + "|" + dir );
+                            System.out.println( RED + "going Down, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET );
                         }
-
-                        System.exit( 1001 );
-                        System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
+                        else {
+                            System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
+                        }
                     }
                     else{
-                        System.out.println( RED + "going Down, word: " + board.getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET );
+                        System.out.println( RED + "going Down, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET );
                     }
 //                    System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
                 }
@@ -194,21 +212,21 @@ public class Game {
                 }
             }
 
-            if( dir.equals( "L" ) ) {
-                if (0 < nCol + word.length() - 1 && nCol + word.length() - 1 < board.getBoard().length) {
-
-                    if( dictionary.contains( board.getBoard()[nRow - 1][nCol].getLetter() + word ) ) {
-
-                        System.out.println(GREEN + "going LEFT and works, word:" + word + RESET);
-                    }
-                    else{
-                        System.out.println( RED + "going LEFT, word: " + board.getBoard()[nRow - 1][nCol].getLetter() + word + " , is not in the dictionary" + RESET );
-                    }
-                }
-                else{
-                    System.out.println(RED + "going LEFT : DELETE word: " + word + RESET);
-                }
-            }
+//            if( dir.equals( "L" ) ) {
+//                if (0 < nCol + word.length() - 1 && nCol + word.length() - 1 < board.getBoard().length) {
+//
+//                    if( dictionary.contains( board.getBoard()[nRow - 1][nCol].getLetter() + word ) ) {
+//
+//                        System.out.println(GREEN + "going LEFT and works, word:" + word + RESET);
+//                    }
+//                    else{
+//                        System.out.println( RED + "going LEFT, word: " + board.getBoard()[nRow - 1][nCol].getLetter() + word + " , is not in the dictionary" + RESET );
+//                    }
+//                }
+//                else{
+//                    System.out.println(RED + "going LEFT : DELETE word: " + word + RESET);
+//                }
+//            }
 
 //            System.out.println("nRow: " + nRow );
 //            System.out.println("nCol: " + nCol );
@@ -232,7 +250,7 @@ public class Game {
     }
 
 
-    public void findPossibleWords() {
+    public void findPossibleWords(Board b ) {
         ArrayList<String> possibleCombos = new ArrayList<>();
         String letters [] = move.getLetters().split("");
 
@@ -330,7 +348,7 @@ public class Game {
 
 //        System.out.println("size is: " + boardComboLst.size() );
 
-        filterIllegalWords( boardWords, boardComboLst );
+        filterIllegalWords( b, boardWords, boardComboLst );
 
 //        for(String l : boardComboLst){
 //            System.out.println( l );

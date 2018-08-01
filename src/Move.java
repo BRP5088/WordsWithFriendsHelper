@@ -9,10 +9,14 @@ import java.util.stream.IntStream;
 public class Move {
 
     private Board board;
-    String RED = "\u001B[31m";  //to see the console in colors
-    String GREEN = "\u001B[32m";
-    String RESET = "\u001B[0m";
+    private String RED = "\u001B[31m";  //to see the console in colors
+    private String GREEN = "\u001B[32m";
+    private String BOLD = "\u001B[1m";
+    private String RESET = "\u001B[0m";
+    private String UNDERLINE = "\u001B[4m";  //to see the console in colors
     private String letters;
+
+    private HashSet dictionary;
 
     private String player1Name;
     private String player2Name;
@@ -22,8 +26,9 @@ public class Move {
 //    private String letters = "";
 
 
-    public Move(Board board ) {
+    public Move(Board board, HashSet dictionary ) {
         this.board = board;
+        this.dictionary = dictionary;
         letters = "";
         player1Name = "";
         player2Name = "";
@@ -69,13 +74,9 @@ public class Move {
 
     public void addToBoard(Board b , Node.playerID playerID, String word, String direction, int row, int col) {
 
+//        System.out.println( "Word print: "+ word );
+
         if( !this.board.getWordLst().contains( word ) ) {
-
-
-            String RED = "\u001B[31m";  //to see the console in colors
-            String BOLD = "\u001B[1m";  //to see the console in colors
-            String UNDERLINE = "\u001B[4m";  //to see the console in colors
-            String RESET = "\u001B[0m"; //to see the console in colors
 
             int nRow = row;
             int nCol = col;
@@ -84,26 +85,37 @@ public class Move {
 
             // --- Need to clean  up the string if it has a blank character ---
             String throwaway = word.substring(0);
-            if (throwaway.contains("*")) {
+            if (throwaway.contains("*") ) {
                 throwaway = throwaway.replace("*", "");
             }
             // --- end ---
 
             b.addToWordsLst("(" + row + "," + col + ")" + throwaway + "|" + direction);
 
-            for (int i = 0; i < word.length(); i++) {
+            for( int i = 0; i < word.length(); i++) {
+
                 if ( word.substring(i, i + 1).equals("*") ) {
                     blank = true;
-                } else {
+                }
+                else{
+                    if ( !b.getBoard()[nRow][nCol].isBeingUsed() ){
 
-                    if (!b.getBoard()[nRow][nCol].isBeingUsed()) {
-                        b.getBoard()[nRow][nCol].moveCall(playerID, word.substring(i, i + 1), blank, row, col);
+                        b.getBoard()[nRow][nCol].moveCall( playerID, word.substring(i, i + 1), blank, row, col );
                     }
                     else {
-                        if (!b.getBoard()[nRow][nCol].getLetter().equals(word.substring(i, i + 1))) {
 
-                            System.out.println(RED + BOLD + "TRYING TO OVERWRITE A LETTER! " + RESET);
-                            System.out.println("Letter on the board: " + b.getBoard()[nRow][nCol]);
+                        if( !b.getBoard()[nRow][nCol].getLetter().equals( word.substring(i, i + 1) ) ) {
+
+                            System.out.println("information:");
+                            System.out.println("nRow: " + nRow + ",  nCol: " + nCol );
+//                            System.out.println("I is: " + i );
+                            System.out.println();
+                            System.out.println();
+                            System.out.println( "here is the word: " + word );
+
+
+                            System.out.println( RED + BOLD + "TRYING TO OVERWRITE A LETTER!" + RESET);
+                            System.out.println("Letter on the board: " + b.getBoard()[nRow][nCol] );
                             System.out.println("Letter trying to replace it with: " + word.substring(i, i + 1));
                             System.exit(3);
                         }
@@ -133,7 +145,7 @@ public class Move {
 
             int total = getPlayerMovePts(b, playerID, word, direction, row, col);
 
-            if (playerID == Node.playerID.player1) {
+            if ( playerID == Node.playerID.player1 ) {
                 this.board.setPlayer1pts(total + this.board.getPlayer1pts());
             } else {
                 this.board.setPlayer2pts(total + this.board.getPlayer2pts());
@@ -159,9 +171,12 @@ public class Move {
                 newWord = newWord.substring(newWord.indexOf(",") + 1);
 
                 c = Integer.parseInt(newWord.substring(0, newWord.indexOf(")")));
-                newWord = newWord.substring(newWord.indexOf(")") + 1);
+                newWord = newWord.substring( newWord.indexOf(")") + 1);
 
-                addToBoard(b, playerID, newWord, dir, r, c);
+
+                if( r < b.getBoard().length && r >= 0 && c < b.getBoard()[0].length && c >= 0){
+                    addToBoard(b, playerID, newWord, dir, r, c);
+                }
             }
 
             int nR = row;
@@ -169,7 +184,7 @@ public class Move {
 
             for( int place = 0; place < word.length(); place++ ){
                 this.board.setBeingUsed( nR, nC, playerID);
-                if (direction.equals("L")) {
+                if ( direction.equals("L")) {
                     nC++;
                 }
                 else{
@@ -305,12 +320,13 @@ public class Move {
         return boardLst;
     }
 
-    public String anyNewWords( Board b) {
+    public String anyNewWords( Board b ) {
 
         ArrayList<String> boardLst = new ArrayList<>( getBoardWords( b, true ) );
 
         for( int n = 0; n < boardLst.size(); n++ ){
-            if( this.board.getWordLst().contains( boardLst.get( n ) ) ){
+
+            if( b.getWordLst().contains( boardLst.get( n ) ) || !dictionary.contains( boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
                 boardLst.remove( boardLst.get( n ) );
                 n--;
             }
