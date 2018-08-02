@@ -192,11 +192,13 @@ public class Node {
 
 
     public void copyNode( Node node ){
-        node.setType( this.type );
-        node.setPlayer( this.player );
-        node.setBeingUsed( this.beingUsed );
-        node.setLetter( this.letter );
-        node.setBlankTile( this.blankTile );
-        node.setPlayer( this.player );
+
+        this.setType( node.type );
+        this.setPlayer( node.player );
+        this.setBeingUsed( node.beingUsed );
+        this.setLetter( node.letter );
+        this.setBlankTile( node.blankTile );
+        this.setPlayer( node.player );
+
     }
 }

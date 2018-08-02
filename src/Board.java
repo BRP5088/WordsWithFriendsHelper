@@ -300,8 +300,8 @@ public class Board {
         String str = "";
 
 
-        String pl1 = BLUE + player1Name + " pts: " + getPlayer1pts() + RESET;
-        String pl2 = BLUE + player2Name + " pts: " + getPlayer2pts() + RESET;
+        String pl1 = BLUE + ( player1Name == null? "player1": player1Name ) + " pts: " + getPlayer1pts() + RESET;
+        String pl2 = BLUE + ( player2Name == null? "player2": player2Name ) + " pts: " + getPlayer2pts() + RESET;
         String bars = "";
 
         for( int num = 0; num < 78 - ( pl1.length() + pl2.length() ); num++ ){
@@ -385,7 +385,6 @@ public class Board {
     }
 
     public Board copyBoard( Board b ){
-//        Board board = new Board();
 
         this.setPlayer1pts( b.getPlayer1pts() );
         this.setPlayer2pts( b.getPlayer2pts() );
@@ -400,7 +399,6 @@ public class Board {
                 this.getBoard()[r][c].copyNode( b.getBoard()[r][c] );
             }
         }
-
         return this;
     }
 

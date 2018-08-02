@@ -12,7 +12,7 @@ public class Main {
 		Board b = g.getBoard();
 		g.passFileName( "src\\Games\\IllegalMoveTest.txt");
 
-		System.out.println("REFIT: "+  ( !g.legalMove( b, "REFIT","D", 12,6) ) );
+		System.out.println( "REFIT: "+  ( !g.legalMove( b, "REFIT","D", 10,6) ) );
 
 		b.displayBoard();
 	}
@@ -56,6 +56,13 @@ public class Main {
 			games[n].passFileName( fileList[n].getPath() );
 			games[n].findPossibleWords( games[n].getBoard() );
 		}
+
+
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		System.out.println("here is the actual board:");
 
 		for( int n = 0; n < numOfGames; n++){
 			System.out.println("Game: "+ ( n + 1 ) );

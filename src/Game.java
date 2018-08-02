@@ -1,5 +1,4 @@
 import java.io.FileNotFoundException;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -123,9 +122,10 @@ public class Game {
     }
 
 
-    public boolean legalMove(Board b , String word, String direction, int row, int col){
+    public boolean legalMove( Board b , String word, String direction, int row, int col){
 
         ArrayList<String> boardLst = new ArrayList<>( move.getBoardWords( b, true ) );
+
 
         for( int n = 0; n < boardLst.size(); n++ ){
             if( !dictionary.contains( boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
@@ -137,116 +137,131 @@ public class Game {
     }
 
 
+
+
+
+
+
     public void filterIllegalWords( Board b, ArrayList<String> boardWordLst, ArrayList<String> wordComboLst ){
 
         Board boardLst [] = new Board[ wordComboLst.size() ];
         ArrayList<String> deleteLst  = new ArrayList<>();
 
-        for( Board board : boardLst ){
-            board = new Board();
-            board.copyBoard( b );
+        for( int bp = 0; bp < wordComboLst.size(); bp++){
+            boardLst[bp] = new Board();
+            boardLst[bp].copyBoard( b );
         }
 
-
         for( int wcw = 0; wcw < wordComboLst.size(); wcw++) {
-            String tmp = wordComboLst.get( wcw );
+            String tmp = wordComboLst.get(wcw);
             String word = "";
 
-            int nRow = Integer.parseInt( tmp.substring( tmp.indexOf( "(" ) + 1 , tmp.indexOf( "," ) ) );
-            int nCol = Integer.parseInt( tmp.substring( tmp.indexOf( "," ) + 1 , tmp.indexOf( ")" ) ) );
-            String dir = tmp.substring( tmp.indexOf( "|" ) + 1 , tmp.indexOf( "|" ) + 2 );
+            int nRow = Integer.parseInt(tmp.substring(tmp.indexOf("(") + 1, tmp.indexOf(",")));
+            int nCol = Integer.parseInt(tmp.substring(tmp.indexOf(",") + 1, tmp.indexOf(")")));
+            String dir = tmp.substring(tmp.indexOf("|") + 1, tmp.indexOf("|") + 2);
 
-            word += tmp.substring( 0, tmp.indexOf( "(" ) );
-            word += tmp.substring( tmp.indexOf( ")" ) + 1, tmp.indexOf("|") );
-            word += tmp.substring( tmp.indexOf( "|" ) + 2 );
+            word += tmp.substring(0, tmp.indexOf("("));
+            word += tmp.substring(tmp.indexOf(")") + 1, tmp.indexOf("|"));
+            word += tmp.substring(tmp.indexOf("|") + 2);
 
-            System.out.println( BLUE + "OG Cords: (" + nRow +"," + nCol + ")" +RESET);
+            System.out.println(BLUE + "OG Cords: (" + nRow + "," + nCol + ")" + RESET);
 
 
-            if( dir.equals( "D" ) ) {
+            if (dir.equals("D") ) {
                 if (!tmp.substring(0, tmp.indexOf("(")).equals("")) {
                     nRow -= tmp.substring(0, tmp.indexOf("(")).length();
                 }
             }
 
             if( dir.equals( "L" ) ) {
-                if (!tmp.substring(0, tmp.indexOf("(") ).equals( "" ) ) {
+                if ( !tmp.substring(0, tmp.indexOf("(") ).equals( "" ) ) {
                     nCol -= tmp.substring(0, tmp.indexOf( "(" ) ).length();
                 }
             }
 
-            System.out.println( BLUE + "Cords: (" + nRow +"," + nCol + ")" +RESET);
+            if (dir.equals("L")) {
 
-            if( dir.equals("D") ) {
-                System.out.println("Down");
-                System.out.println( nRow + word.length() - 1 );
-            }
-            else {
-                System.out.println("Left");
-                System.out.println( nCol + word.length() - 1 );
-            }
 
-            System.out.println( BLUE+ "Word: " + word + " length: " + word.length() + RESET);
+                System.out.println(BLUE + "Cords: (" + nRow + "," + nCol + ")" + RESET);
 
-            if( dir.equals( "D" ) ) {
-                if ( 0 < nRow + word.length() - 1 && nRow + word.length() - 1 < boardLst[wcw].getBoard()[0].length) { // checks the bounds
-                    if( dictionary.contains( boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word ) ) { //see if the word is even in the dictionary
+//                if ( dir.equals("D") ) {
+//                    System.out.println("Down");
+//                    System.out.println(nRow + word.length() - 1);
+//                }
 
-                        move.addToBoard( boardLst[wcw], Node.playerID.player1, word, dir, nRow, nCol );
+                System.out.println(BLUE + "Word: " + word + " length: " + word.length() + RESET);
 
-                        if( !legalMove( boardLst[wcw] , word, dir, nRow, nCol ) ){
-                            deleteLst.add( "("+nRow + "," + nCol + ")" + word + "|" + dir );
-                            System.out.println( RED + "going Down, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET );
-                        }
-                        else {
-                            System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
-                        }
-                    }
-                    else{
-                        System.out.println( RED + "going Down, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET );
-                    }
-//                    System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
-                }
-                else{
-                    System.out.println(RED + "going DOWN : DELETE word: " + word + RESET);
-                }
-            }
-
-//            if( dir.equals( "L" ) ) {
-//                if (0 < nCol + word.length() - 1 && nCol + word.length() - 1 < board.getBoard().length) {
+//                if ( dir.equals("D") ) {
 //
-//                    if( dictionary.contains( board.getBoard()[nRow - 1][nCol].getLetter() + word ) ) {
+//                    if ( 0 < nRow && nRow + word.length() < boardLst[wcw].getBoard()[0].length) { // checks the bounds
 //
-//                        System.out.println(GREEN + "going LEFT and works, word:" + word + RESET);
+//                        if ( dictionary.contains(boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word ) ) { //see if the word is even in the dictionary
+//
+//                            move.addToBoard(boardLst[wcw], Node.playerID.player1, word, dir, nRow, nCol);
+//
+//                            if( !legalMove(boardLst[wcw], word, dir, nRow, nCol)) {
+//                                deleteLst.add("(" + nRow + "," + nCol + ")" + word + "|" + dir);
+//                                System.out.println(RED + "going Down, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not legal move" + RESET);
+//                                continue;
+//                            }
+//                            else{
+//                                System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
+//                            }
+//                        }
+//                        else{
+//                            System.out.println(RED + "going Down, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET);
+//                            continue;
+//                        }
+////                    System.out.println(GREEN + "going DOWN and works, word:" + word + RESET);
+//
+//                        move.addToBoard( boardLst[wcw] , Node.playerID.player1, word, dir, nRow, nCol);
+//                        boardLst[wcw].displayBoard();
 //                    }
-//                    else{
-//                        System.out.println( RED + "going LEFT, word: " + board.getBoard()[nRow - 1][nCol].getLetter() + word + " , is not in the dictionary" + RESET );
+//                    else {
+//                        System.out.println(RED + "going DOWN : DELETE word: " + word + " , out of bounds" + RESET);
+//                        deleteLst.add( word );
 //                    }
 //                }
-//                else{
-//                    System.out.println(RED + "going LEFT : DELETE word: " + word + RESET);
-//                }
-//            }
-
-//            System.out.println("nRow: " + nRow );
-//            System.out.println("nCol: " + nCol );
-//            System.out.println("DIR: " + dir );
-//            System.out.println("Word: " + word );
 
 
+                //________________________________________________________
 
+
+                if ( dir.equals("L") ) {
+
+                    if ( 0 < nRow && nRow + word.length() < boardLst[wcw].getBoard()[0].length) { // checks the bounds
+
+                        if ( dictionary.contains(boardLst[wcw].getBoard()[nRow][nCol].getLetter() + word ) ) { //see if the word is even in the dictionary
+
+                            move.addToBoard( boardLst[wcw], Node.playerID.player1, word, dir, nRow, nCol);
+
+                            if( !legalMove( boardLst[wcw], word, dir, nRow, nCol) ) {
+                                deleteLst.add("(" + nRow + "," + nCol + ")" + word + "|" + dir);
+                                System.out.println(RED + "going left, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not legal move" + RESET);
+                                continue;
+                            }
+                            else{
+                                System.out.println(GREEN + "going left and works, word:" + word + RESET);
+                            }
+                        }
+                        else{
+                            System.out.println(RED + "going left, word: " + boardLst[wcw].getBoard()[nRow][nCol - 1].getLetter() + word + " , is not in the dictionary" + RESET);
+                            continue;
+                        }
+//                    System.out.println(GREEN + "going left and works, word:" + word + RESET);
+
+                        move.addToBoard( boardLst[wcw] , Node.playerID.player1, word, dir, nRow, nCol);
+                        boardLst[wcw].displayBoard();
+                    }
+                    else {
+                        System.out.println(RED + "going left : DELETE word: " + word + " , out of bounds" + RESET);
+                        deleteLst.add( word );
+                    }
+                }
+            }
 
             System.out.println("____________");
-
-
-//            for (int row = 0; row < board.getBoard().length; row++) {
-//                for (int col = 0; col < board.getBoard()[0].length; col++) {
-//
-//                }
-//            }
         }
-
-
     }
 
 
