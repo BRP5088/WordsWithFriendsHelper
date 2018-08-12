@@ -1,61 +1,30 @@
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 
 /**
  * Created by Brett Patterson on 7/1/2018.
  */
-public class Game {
+public class Game extends utilityCode{
 
     private Board board;
     private Move move;
-    private LetterRack letterRack;
-    private HashSet dictionary;
+    public LetterRack letterRack;
+    private HashMap dictionary;
     public String letters [];
     public String player1Name;
     public String player2Name;
-
-    private String BLACK = "\u001B[30m";
-    private String RED = "\u001B[31m";
-    private String GREEN = "\u001B[32m";
-    private String YELLOW = "\u001B[33m";
-    private String BLUE = "\u001B[34m";
-    private String MAGENTA = "\u001B[35m";
-    private String CYAN = "\u001B[36m";
-    private String WHITE = "\u001B[37m";
-    private String RESET = "\u001B[0m";
-
-    private String BGBLACK = "\u001B[40";
-    private String BGRED = "\u001B[41";
-    private String BGGREEN = "\u001B[42";
-    private String BGYELLOW = "\u001B[43";
-    private String BGBLUE = "\u001B[44";
-    private String BGMAGENTA = "\u001B[45";
-    private String BGCYAN = "\u001B[46";
-    private String BGWHITE = "\u001B[47";
-
-    private String BBGBLACK = "\u001B[40;1m";
-    private String BBGRED = "\u001B[41;1m";
-    private String BBGGREEN = "\u001B[42;1m";
-    private String BBGYELLOW = "\u001B[43;1m";
-    private String BBGBLUE = "\u001B[44;1m";
-    private String BBGMAGENTA = "\u001B[45;1m";
-    private String BBGCYAN = "\u001B[46;1m";
-    private String BBGWHITE = "\u001B[47;1m";
-
-    private String BOLD = "\u001B[1m";
-    private String UNDERLINE = "\u001B[4m";
-    private String REVERSED = "\u001B[7m";
 
 
     public Game() throws FileNotFoundException {
         board = new Board();
         letterRack = new LetterRack();
         dictionary = letterRack.getDictionary();
+
         move = new Move( board, dictionary );
+        letterRack.setRack( move.getLetters().split("") );
     }
 
-    public void passFileName( String path) throws FileNotFoundException {
+    public void passFileName( String path ) throws FileNotFoundException {
         move.preGameMoves( board, path );
         setLetters( move.getLetters() );
         board.setPlayer1Name( move.getPlayer1Name() );
@@ -66,7 +35,7 @@ public class Game {
         return board;
     }
 
-    public void setLetters( String letters){
+    public void setLetters( String letters ){
         this.letters = new String[ letters.length() ];
 
         for( int n = 0; n < letters.length(); n++){
@@ -74,8 +43,16 @@ public class Game {
         }
     }
 
+    public String getLetters() {
+        String tmp = "";
+        for( String l: letters){
+            tmp += l;
+        }
 
-    public ArrayList<String> generateCombos( String letters[] ){  // 7 letter total: 13692
+        return tmp;
+    }
+
+    public ArrayList<String> generateCombos(String letters[] ){  // 7 letter total: 13692
         ArrayList<String> possibleCombos = new ArrayList<>();
 
         for( int s = 0; s < letters.length; s++ ) {
@@ -108,7 +85,16 @@ public class Game {
                                 for( int seven = 0; seven < letters.length; seven++){ //should be: 5040
                                     if( s != e && e != three && s != three && s != four && e != four && three != four && s != five && e != five && three != five && four != five && s != six && e != six && three != six && four != six && five != six &&
                                             s != seven && e != seven && three != seven && four != seven && five != seven && six != seven ) {
-                                        possibleCombos.add(letters[s] + letters[e] + letters[three] + letters[four] + letters[five] + letters[six] + letters[seven]);
+
+                                        possibleCombos.add(letters[s] + letters[e] + letters[three] + letters[four] + letters[five] + letters[six] + letters[seven] );
+                                    }
+
+                                    for( int eight = 0; eight < letters.length; eight++){ //should be: ???? big number
+                                        if( s != e && e != three && s != three && s != four && e != four && three != four && s != five && e != five && three != five && four != five && s != six && e != six && three != six && four != six && five != six &&
+                                                s != seven && e != seven && three != seven && four != seven && five != seven && six != seven && s != eight && e != eight && three != eight && four != eight && five != eight && six != eight && seven != eight) {
+
+                                            possibleCombos.add(letters[s] + letters[e] + letters[three] + letters[four] + letters[five] + letters[six] + letters[seven] + letters[eight]);
+                                        }
                                     }
                                 }
                             }
@@ -127,22 +113,27 @@ public class Game {
         ArrayList<String> boardLst = new ArrayList<>( move.getBoardWords( b, true ) );
 
 
+
         for( int n = 0; n < boardLst.size(); n++ ){
-            if( !dictionary.contains( boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
+
+            if( !dictionaryContains( dictionary, boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
                 return false;
             }
+
+//            if( !dictionary.contains( boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
+//                return false;
+//            }
         }
 
         return true;
     }
 
 
+    public HashMap<String, HashSet<String> > getDictionary() {
+        return dictionary;
+    }
 
-
-
-
-
-    public void filterIllegalWords( Board b, ArrayList<String> boardWordLst, ArrayList<String> wordComboLst ){
+    public void filterIllegalWords(Board b, ArrayList<String> boardWordLst, ArrayList<String> wordComboLst ){
 
         Board boardLst [] = new Board[ wordComboLst.size() ];
         ArrayList<String> deleteLst  = new ArrayList<>();
@@ -164,7 +155,8 @@ public class Game {
             word += tmp.substring(tmp.indexOf(")") + 1, tmp.indexOf("|"));
             word += tmp.substring(tmp.indexOf("|") + 2);
 
-            System.out.println(BLUE + "OG Cords: (" + nRow + "," + nCol + ")" + RESET);
+
+            System.out.println( "here is the dir: " + dir);
 
 
             if (dir.equals("D") ) {
@@ -177,12 +169,13 @@ public class Game {
                 if ( !tmp.substring(0, tmp.indexOf("(") ).equals( "" ) ) {
                     nCol -= tmp.substring(0, tmp.indexOf( "(" ) ).length();
                 }
+                System.out.println( BLUE + "OG Cords: (" + nRow + "," + nCol + ")" + RESET);
+
             }
 
             if (dir.equals("L")) {
 
-
-                System.out.println(BLUE + "Cords: (" + nRow + "," + nCol + ")" + RESET);
+                System.out.println( BLUE + "Cords: (" + nRow + "," + nCol + ")" + RESET);
 
 //                if ( dir.equals("D") ) {
 //                    System.out.println("Down");
@@ -231,7 +224,7 @@ public class Game {
 
                     if ( 0 < nRow && nRow + word.length() < boardLst[wcw].getBoard()[0].length) { // checks the bounds
 
-                        if ( dictionary.contains(boardLst[wcw].getBoard()[nRow][nCol].getLetter() + word ) ) { //see if the word is even in the dictionary
+                        if ( dictionaryContains(dictionary, boardLst[wcw].getBoard()[nRow][nCol].getLetter() + word ) ) { //see if the word is even in the dictionary
 
                             move.addToBoard( boardLst[wcw], Node.playerID.player1, word, dir, nRow, nCol);
 
@@ -262,6 +255,25 @@ public class Game {
 
             System.out.println("____________");
         }
+    }
+
+
+    public ArrayList<String> getBoardSingleLetters(Board b){
+        ArrayList lettersLst = new ArrayList();
+
+        for( int r = 0; r < b.getBoard().length; r++) {
+            for (int c = 0; c < b.getBoard()[0].length; c++) {
+
+                if( !b.getNode(r, c).getLetter().equals( "" ) ) {
+
+                    lettersLst.add( b.getNode(r, c ).getLetter() );
+
+                }
+            }
+        }
+
+        return lettersLst;
+
     }
 
 
@@ -312,7 +324,7 @@ public class Game {
             }
 
             for( String el : combos ){
-                possibleCombos.addAll( generateCombos( el.split("") ) );
+                    possibleCombos.addAll( generateCombos( el.split("") ) );
             }
         }
         else{
@@ -322,48 +334,95 @@ public class Game {
         ArrayList<String> found = new ArrayList<>();
 
         for( int x = 0; x < possibleCombos.size(); x++ ){
-            if( dictionary.contains( possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) ) ){
+            if( dictionaryContains( dictionary, possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) ) ){
                 found.add( possibleCombos.get( x ) );
             }
         }
 
-
-
         ArrayList<String> boardComboLst = new ArrayList<>();
-        ArrayList<String> boardWords = new ArrayList<>( move.getBoardWords( board, true ) );
+        ArrayList<String> allTheLetters = new ArrayList<>( getBoardSingleLetters( b ) );
+        ArrayList<String> boardWords = new ArrayList<>( move.getBoardWords( b, true ) );
 //        System.out.println( boardWords );
 
-        for( int v = 0; v < letters.length; v++){
-            possibleCombos.add( letters[v] );
-        }
+
+        possibleCombos.addAll( Arrays.asList(letters) );
+        possibleCombos.addAll( allTheLetters );
+
+        boardWords.addAll( getBoardSingleLetters( b ) );
+
 
         for( int x = 0; x < possibleCombos.size(); x++ ){
             for( int bw = 0; bw < boardWords.size(); bw++) {
 
                 String tmp = boardWords.get( bw );
-                tmp = tmp.substring( tmp.indexOf(")") + 1, tmp.indexOf( "|" ) );
+                if( tmp.contains( "(") ) {
+                    tmp = tmp.substring(tmp.indexOf(")") + 1, tmp.indexOf("|"));
+                }
 
-                if ( dictionary.contains( possibleCombos.get( x ) + tmp ) && !found.contains( possibleCombos.get( x ) + tmp ) ){
+//                System.out.println( tmp + possibleCombos.get( x ) );
+                if ( dictionaryContains(dictionary, possibleCombos.get( x ) + tmp ) && !found.contains( possibleCombos.get( x ) + tmp ) ){
                     boardComboLst.add( possibleCombos.get( x ) + boardWords.get( bw ) );
                 }
 
-                if ( dictionary.contains( tmp + possibleCombos.get( x ) ) && !found.contains( tmp + possibleCombos.get( x ) ) ){
+//                System.out.println( tmp + possibleCombos.get( x ) );
+                if ( dictionaryContains(dictionary, tmp + possibleCombos.get( x ) ) && !found.contains( tmp + possibleCombos.get( x ) ) ){
                     boardComboLst.add( boardWords.get( bw ) + possibleCombos.get( x ) );
                 }
 
-//                if ( dictionary.contains( possibleCombos.get( x )+ tmp + possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) + tmp + possibleCombos.get( x ) ) ){
-//                    boardComboLst.add( possibleCombos.get( x ) + boardWords.get( bw ) + possibleCombos.get( x ) );
-//                }
+//                System.out.println( possibleCombos.get( x )+ tmp + possibleCombos.get( x ) );
+                if ( dictionaryContains(dictionary, possibleCombos.get( x )+ tmp + possibleCombos.get( x ) ) && !found.contains( possibleCombos.get( x ) + tmp + possibleCombos.get( x ) ) ){
+                    boardComboLst.add( possibleCombos.get( x ) + boardWords.get( bw ) + possibleCombos.get( x ) );
+                }
                 //TODO
+
+//                System.out.println("________________________________________");
+//                System.out.println( "X: " + x + " , out of: " + possibleCombos.size() );
+                if( x % 1000 == 0){
+                    float total = x;
+                    total /= possibleCombos.size();
+                    total *= 100;
+                    System.out.println( total +"%" );
+                }
+
+//                System.out.println( total );
+                for( int p = 0; p < possibleCombos.size(); p++){
+
+                    String p1c = possibleCombos.get( p );
+                    if( p1c.contains( "(") ) {
+                        p1c = p1c.substring( p1c.indexOf(")") + 1, p1c.indexOf("|"));
+                    }
+
+
+                    if( p != x) {
+//                    System.out.println( p1c + tmp + possibleCombos.get( x ) );
+                        if (dictionaryContains(dictionary, p1c + tmp + possibleCombos.get(x)) && !found.contains(p1c + tmp + possibleCombos.get(x))) {
+                            boardComboLst.add(p1c + tmp + possibleCombos.get(x));
+                        }
+                    }
+
+                }
                 /*
                     add the functionality to have different combos of before and after.
                  */
             }
         }
+        System.out.println( boardComboLst );
 
 //        System.out.println("size is: " + boardComboLst.size() );
 
-        filterIllegalWords( b, boardWords, boardComboLst );
+        for( String w : boardComboLst ) {
+
+
+            String word = w.substring(0, w.indexOf("("));
+            word += w.substring( w.indexOf(")") + 1, w.indexOf("|"));
+            word += w.substring( w.indexOf("|") + 2);
+
+            System.out.println( word );
+//            System.out.println( w );
+//            System.out.println("___________");
+        }
+
+//        filterIllegalWords( b, boardWords, boardComboLst );
 
 //        for(String l : boardComboLst){
 //            System.out.println( l );

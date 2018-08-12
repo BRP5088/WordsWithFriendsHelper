@@ -6,17 +6,12 @@ import java.util.stream.IntStream;
 /**
  * Created by Brett Patterson on 6/20/2018.
  */
-public class Move {
+public class Move extends utilityCode{
 
     private Board board;
-    private String RED = "\u001B[31m";  //to see the console in colors
-    private String GREEN = "\u001B[32m";
-    private String BOLD = "\u001B[1m";
-    private String RESET = "\u001B[0m";
-    private String UNDERLINE = "\u001B[4m";  //to see the console in colors
     private String letters;
 
-    private HashSet dictionary;
+    private HashMap dictionary;
 
     private String player1Name;
     private String player2Name;
@@ -26,7 +21,7 @@ public class Move {
 //    private String letters = "";
 
 
-    public Move(Board board, HashSet dictionary ) {
+    public Move(Board board, HashMap dictionary ) {
         this.board = board;
         this.dictionary = dictionary;
         letters = "";
@@ -321,13 +316,15 @@ public class Move {
         return boardLst;
     }
 
+
+
+
     public String anyNewWords( Board b ) {
 
         ArrayList<String> boardLst = new ArrayList<>( getBoardWords( b, true ) );
 
         for( int n = 0; n < boardLst.size(); n++ ){
-
-            if( b.getWordLst().contains( boardLst.get( n ) ) || !dictionary.contains( boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
+            if( b.getWordLst().contains( boardLst.get( n ) ) || !dictionaryContains( dictionary, boardLst.get( n ).substring( boardLst.get( n ).indexOf(")") + 1, boardLst.get( n ).indexOf("|") ) ) ){
                 boardLst.remove( boardLst.get( n ) );
                 n--;
             }
